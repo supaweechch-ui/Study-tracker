@@ -1,0 +1,869 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0284c7">
+<meta name="description" content="บันทึกตารางเรียน เวลาเรียน โน้ต และเช็คเข้าเรียน">
+<meta name="apple-mobile-web-app-title" content="สมุดเรียน">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<script>try{var _t=JSON.parse(localStorage.getItem("st.theme")||"null")||["sea","auto"],_d=_t[1]==="dark"||(_t[1]==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.dataset.theme=_t[0];document.documentElement.dataset.mode=_d?"dark":"light"}catch(e){document.documentElement.dataset.theme="sea";document.documentElement.dataset.mode="light"}</script>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
+<title>สมุดติดตามการเรียน</title>
+<style>
+:root{--safe:env(safe-area-inset-bottom,0px);--now:#f43f5e}
+:root,[data-theme=sea]{--bg:#f8fafc;--card:#ffffff;--text:#0f1b2d;--muted:#64748b;--pri:#0284c7;--priS:#e7f3fa;--onpri:#ffffff;--line:#e5eaf0;--red:#e0475b}
+[data-theme=sea][data-mode=dark]{--bg:#0a1219;--card:#101c27;--text:#e8f1f7;--muted:#8aa0b2;--pri:#38bdf8;--priS:#12303f;--onpri:#04202e;--line:#1d2f3d;--red:#fb7185}
+[data-theme=mint]{--bg:#f4faf7;--card:#ffffff;--text:#10231b;--muted:#5f7a6e;--pri:#059669;--priS:#e1f4ea;--onpri:#ffffff;--line:#dfece4;--red:#e0475b}
+[data-theme=mint][data-mode=dark]{--bg:#08140f;--card:#0f1d17;--text:#e6f4ec;--muted:#86a496;--pri:#34d399;--priS:#11332a;--onpri:#04231a;--line:#1b2f26;--red:#fb7185}
+[data-theme=indigo]{--bg:#f7f7fd;--card:#ffffff;--text:#1a1b38;--muted:#6b6e92;--pri:#4f46e5;--priS:#eceafd;--onpri:#ffffff;--line:#e6e6f4;--red:#e0475b}
+[data-theme=indigo][data-mode=dark]{--bg:#0e0f1f;--card:#171830;--text:#ececfb;--muted:#9a9dc0;--pri:#818cf8;--priS:#25274f;--onpri:#0e1030;--line:#2a2c4a;--red:#fb7185}
+[data-theme=pink]{--bg:#fff7fa;--card:#ffffff;--text:#3a1827;--muted:#8d6577;--pri:#db2777;--priS:#fde7f0;--onpri:#ffffff;--line:#f5dde6;--red:#be123c}
+[data-theme=pink][data-mode=dark]{--bg:#170b11;--card:#22121a;--text:#fbe9f1;--muted:#c39aad;--pri:#f472b6;--priS:#3d1a2b;--onpri:#2a0a18;--line:#3a2230;--red:#fb7185}
+[data-theme=orange]{--bg:#fffaf5;--card:#ffffff;--text:#2b1a0e;--muted:#8a6a52;--pri:#ea580c;--priS:#ffeedd;--onpri:#ffffff;--line:#f3e4d6;--red:#dc2626}
+[data-theme=orange][data-mode=dark]{--bg:#150e08;--card:#21160d;--text:#fbefe3;--muted:#c2a28a;--pri:#fb923c;--priS:#3a2411;--onpri:#2a1204;--line:#3a2a1d;--red:#fb7185}
+[data-theme=cream]{--bg:#f6efe0;--card:#fffaf0;--text:#3b2f1e;--muted:#8a7a60;--pri:#8c5a2b;--priS:#efe3cc;--onpri:#fffaf0;--line:#e4d7bb;--red:#b91c1c}
+[data-theme=cream][data-mode=dark]{--bg:#1a1610;--card:#241e15;--text:#efe6d3;--muted:#a99a7e;--pri:#d9a05b;--priS:#3a2f1f;--onpri:#1f1508;--line:#382f22;--red:#f87171}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 "IBM Plex Sans Thai","Sarabun","Noto Sans Thai",system-ui,-apple-system,"Segoe UI",sans-serif;padding-bottom:calc(76px + var(--safe))}
+button{font-family:inherit;cursor:pointer}
+.ic{width:22px;height:22px;display:block}
+header{position:sticky;top:0;z-index:20;background:var(--bg);height:50px;display:flex;align-items:center;justify-content:space-between;padding:0 16px}
+header h1{font-size:16px;font-weight:600;margin:0;letter-spacing:.1px}
+header .ib{border:0;background:none;color:var(--muted)}
+main{max-width:640px;margin:0 auto;padding:4px 16px 12px}
+nav{position:fixed;bottom:0;left:0;right:0;z-index:20;background:var(--card);border-top:1px solid var(--line);display:flex;padding-bottom:var(--safe)}
+nav button{flex:1;border:0;background:none;color:var(--muted);padding:9px 0 8px;font-size:11px;display:flex;flex-direction:column;align-items:center;gap:3px;position:relative}
+nav button.on{color:var(--pri);font-weight:600}
+nav button.on::before{content:"";position:absolute;top:0;width:22px;height:3px;border-radius:0 0 3px 3px;background:var(--pri)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:10px 0}
+.row{display:flex;align-items:center}.between{justify-content:space-between}.gap{gap:8px}.f1{flex:1}.c{text-align:center}.r{text-align:right}
+.muted{color:var(--muted)}.sm{font-size:12.5px}.mono{font-variant-numeric:tabular-nums;font-weight:600}
+.btn{border:0;background:var(--pri);color:var(--onpri);border-radius:12px;padding:0 16px;min-height:44px;font-size:15px;font-weight:600}
+.btn.s{min-height:36px;padding:0 13px;font-size:13.5px;border-radius:10px}
+.btn.o{background:var(--priS);color:var(--pri)}
+.btn.d{background:transparent;color:var(--red);border:1px solid var(--red)}
+.ib{border:0;background:var(--priS);color:var(--pri);border-radius:12px;min-width:38px;height:38px;font-size:22px;line-height:1;display:grid;place-items:center}
+.lnk{border:0;background:none;color:var(--pri);font-size:13px;padding:0;font-weight:500}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.tb{display:flex;gap:8px;margin:0 0 4px}
+.hero{display:flex;justify-content:space-between;align-items:flex-end;margin:8px 0 16px}
+.hero small{display:block;color:var(--muted);font-size:13px}
+.hero h2{margin:0;font-size:27px;font-weight:600;letter-spacing:-.3px;line-height:1.2}
+.nv{display:flex;gap:6px}
+.st{display:flex;margin:0 0 12px}
+.st div{flex:1;padding:0 12px;border-left:1px solid var(--line)}
+.st div:first-child{padding-left:0;border-left:0}
+.st b{display:block;font-size:19px;font-weight:600;line-height:1.3}
+.st span{font-size:12px;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.stats div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 6px;text-align:center}
+.stats b{display:block;font-size:15px;font-weight:600}.stats span{font-size:12px;color:var(--muted)}
+.empty{text-align:center;color:var(--muted);padding:28px 10px;border:1px dashed var(--line);border-radius:16px;margin:10px 0}
+.seg{display:flex;background:var(--priS);border-radius:12px;padding:3px;margin:6px 0 10px}
+.seg button{flex:1;border:0;background:none;color:var(--muted);padding:8px;border-radius:10px;font-size:14px;font-weight:500}
+.seg button.on{background:var(--card);color:var(--pri);font-weight:600}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;flex:none}
+.li{padding:9px 0;border-bottom:1px solid var(--line)}
+.li:last-child{border-bottom:0}
+.ss{display:flex;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;margin:10px 0}
+.ss.run{border-color:var(--pri);box-shadow:0 0 0 1px var(--pri)}
+.ss .tm{width:44px;flex:none}
+.ss .tm b{display:block;font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.3}
+.ss .tm span{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.ss .bar2{width:3px;border-radius:3px;flex:none}
+.ss .mid{flex:1;min-width:0}
+.ss .mid>.row b{font-size:16px;font-weight:600}
+.ss .tl{display:flex;gap:16px;margin-top:6px}
+.ss .tl button{border:0;background:none;color:var(--pri);font-size:13.5px;padding:4px 0;font-weight:500}
+.ss .go{width:46px;height:46px;border-radius:50%;border:0;background:var(--pri);color:var(--onpri);display:grid;place-items:center;flex:none;align-self:center}
+.ss .go.stop{background:var(--now);color:#fff}
+.ss .go .ic{width:20px;height:20px}
+.pill{font-size:11px;padding:1px 9px;border-radius:99px;background:var(--priS);color:var(--pri);font-weight:600;white-space:nowrap}
+.pill.now{background:var(--pri);color:var(--onpri)}
+.dayh{display:flex;justify-content:space-between;align-items:center;margin-top:16px;font-weight:600}
+.dayh.t{color:var(--pri)}
+.sl{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:6px}
+.tbar{position:sticky;top:50px;z-index:15;background:var(--pri);color:var(--onpri);border-radius:14px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.tbar .btn{background:var(--onpri);color:var(--pri)}.tbar .btn.o{background:rgba(255,255,255,.25);color:inherit}
+.tg{display:grid;grid-template-columns:28px repeat(7,minmax(0,1fr));column-gap:2px}
+.tgh{text-align:center;padding:4px 0;border-radius:10px;cursor:pointer;font-size:11px;color:var(--muted)}
+.tgh b{display:block;font-size:15px;font-weight:600;color:var(--text);line-height:1.3}
+.tgh.t{background:var(--pri);color:var(--onpri)}.tgh.t b{color:var(--onpri)}
+.tt{position:relative;color:var(--muted);font-size:10px}
+.tt i{position:absolute;right:3px;font-style:normal;transform:translateY(-50%);font-variant-numeric:tabular-nums}
+.tc{position:relative;border-left:1px solid var(--line);background-image:repeating-linear-gradient(to bottom,var(--line) 0,var(--line) 1px,transparent 1px,transparent var(--ph))}
+.blk{position:absolute;left:1px;right:1px;border-radius:7px;padding:2px 3px;overflow:hidden;font-size:10px;line-height:1.25;border-left:3px solid;cursor:pointer;color:var(--text)}
+.blk b{display:block;font-weight:600;word-break:break-all}.blk span{color:var(--muted)}
+.nowl{position:absolute;left:0;right:0;height:2px;background:var(--now);z-index:2}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.gh{text-align:center;font-size:12px;color:var(--muted)}
+.cell{min-height:58px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:4px;font-size:12px;cursor:pointer;display:flex;flex-direction:column;gap:2px}
+.cell.t{border-color:var(--pri);box-shadow:0 0 0 1px var(--pri)}
+.cell.x{visibility:hidden}
+.cell .dots{display:flex;gap:2px;flex-wrap:wrap}.cell .dot{width:7px;height:7px}
+.cell .mm{font-size:10.5px;color:var(--pri);font-weight:600}
+.bk{position:fixed;inset:0;background:rgba(8,16,24,.5);z-index:50;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--card);width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:22px 22px 0 0;padding:18px 18px calc(18px + var(--safe))}
+.sheet h3{margin:0 0 8px;font-size:18px;font-weight:600}
+label{display:block;font-size:13px;color:var(--muted);margin-top:12px}
+input,select,textarea{width:100%;margin-top:4px;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--text);font:inherit}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--pri);outline-offset:-1px;border-color:transparent}
+textarea{resize:vertical}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.chip{border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:99px;padding:6px 12px;font-size:13px}
+.pal{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.sw{width:32px;height:32px;border-radius:50%;border:3px solid transparent}.sw.on{border-color:var(--text)}
+.star{border:0;background:none;font-size:26px;color:var(--line);padding:0 2px}.star.on{color:#f59e0b}
+.days{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.days label{margin:0;display:flex;align-items:center;gap:4px;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:99px;padding:5px 12px}
+.days input{width:auto;margin:0}
+.bar{height:6px;border-radius:6px;background:var(--line);overflow:hidden;margin-top:5px}.bar i{display:block;height:100%;border-radius:6px}
+.chart{width:100%;height:auto}
+.tag{display:inline-block;padding:1px 9px;border-radius:99px;font-size:12px;color:#fff}
+.pend{color:var(--red);font-weight:600}
+#toast{position:fixed;left:50%;bottom:calc(86px + var(--safe));transform:translateX(-50%);background:var(--text);color:var(--bg);padding:9px 16px;border-radius:99px;font-size:14px;z-index:99;display:none;max-width:90%;text-align:center}
+#modal{display:none}
+.pt{overflow-x:auto;margin:0 -16px;padding:0 16px 6px}
+.ptab{border-collapse:separate;border-spacing:0;min-width:900px;width:100%;table-layout:fixed;font-size:12px}
+.ptab th,.ptab td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:4px;text-align:center;vertical-align:middle;background:var(--card)}
+.ptab thead tr:first-child th{border-top:1px solid var(--line)}
+.ptab th:first-child,.ptab td:first-child{border-left:1px solid var(--line)}
+.ptab thead tr:first-child th:first-child{border-top-left-radius:12px}
+.ptab thead tr:first-child th:last-child{border-top-right-radius:12px}
+.ptab tbody tr:last-child th:first-child{border-bottom-left-radius:12px}
+.ptab tbody tr:last-child td:last-child{border-bottom-right-radius:12px}
+.ptab .fc{position:sticky;left:0;z-index:2;width:64px;font-weight:600;font-size:13px}
+.ptab thead th{font-weight:600;font-size:13px}
+.ptab .tm2{font-size:10.5px;font-weight:400;color:var(--muted);font-variant-numeric:tabular-nums;line-height:1.35}
+.ptab th.cur{color:var(--pri);box-shadow:inset 0 -2px 0 var(--pri)}
+.ptab tbody td{cursor:pointer;padding:3px}
+.ptab td.brk{background:repeating-linear-gradient(135deg,var(--priS) 0 6px,transparent 6px 12px);color:var(--muted);font-size:11.5px;font-weight:600;cursor:default}
+.ptab tr.tr-t th.fc{color:var(--pri)}
+.ptab td.emp{color:var(--line);font-size:18px}
+.pc{border-radius:9px;border-left:3px solid;padding:5px 3px;min-height:74px;display:flex;flex-direction:column;justify-content:center;gap:1px}
+.pc b{font-size:13px;font-weight:600;word-break:break-word;line-height:1.25}
+.pc span{font-size:10.5px;color:var(--muted);line-height:1.25}
+.pc em{font-style:normal;font-size:12px;font-weight:600}
+.ptab th.eh{cursor:pointer}.ptab th.tm2.eh{text-decoration:underline dotted var(--muted);text-underline-offset:3px}
+.pc.now{box-shadow:0 0 0 2px var(--pri)}
+.thm{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:6px}
+.th{border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:12px;padding:10px;display:flex;align-items:center;gap:8px;font-size:14px}
+.th i{width:18px;height:18px;border-radius:50%;flex:none}
+.th.on{border-color:var(--pri);box-shadow:0 0 0 1px var(--pri);font-weight:600}
+.gimg{width:100%;height:140px;object-fit:cover;border-radius:12px;background:var(--bg);cursor:pointer;display:block}
+.gi{padding:12px 0;border-bottom:1px solid var(--line)}.gi:last-of-type{border-bottom:0}
+.pinimg{width:100%;max-height:230px;object-fit:contain;border-radius:10px;margin-top:8px;background:var(--bg);cursor:zoom-in;display:block}
+#viewer{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.95);display:none;flex-direction:column;color:#fff}
+.vtop{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;gap:10px}
+.vtop .ib{background:rgba(255,255,255,.16);color:#fff}
+.vstage{flex:1;overflow:hidden;touch-action:none;display:grid;place-items:center;min-height:0}
+.vstage img{max-width:100%;max-height:100%;transform-origin:center;user-select:none;-webkit-user-drag:none;will-change:transform}
+.vbar{display:flex;justify-content:center;gap:10px;padding:10px 14px calc(10px + var(--safe))}
+.vbar button{border:0;background:rgba(255,255,255,.16);color:#fff;border-radius:12px;min-width:56px;height:42px;font-size:18px;font-weight:600}
+.vnote{padding:0 16px 10px;font-size:13px;color:#cbd5e1;text-align:center}
+.fbtn{position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;margin:0;font-size:15px;color:var(--onpri);cursor:pointer}
+.fbtn.o{color:var(--pri)}
+.fbtn input{position:absolute;inset:0;width:100%;height:100%;opacity:0;margin:0;padding:0;border:0;cursor:pointer;font-size:0}
+.att{display:flex;gap:6px;margin-top:10px}
+.att button{flex:1;border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:10px;min-height:34px;font-size:13px;font-weight:500;padding:0}
+.att button.on{color:#fff;border-color:transparent;font-weight:600}
+.sq{display:inline-block;width:7px;height:7px;border-radius:2px}
+</style>
+</head>
+<body>
+<header><h1>สมุดติดตามการเรียน</h1><button class="ib" onclick="openSettings()" aria-label="ตั้งค่า"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></button></header>
+<main id="app"></main>
+<nav>
+<button data-v="today" onclick="setView('today')"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>วันนี้</button>
+<button data-v="sched" onclick="setView('sched')"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>ตาราง</button>
+<button data-v="notes" onclick="setView('notes')"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h10l4 4v14H5z"/><path d="M8 12h8M8 16h5"/></svg>โน้ต</button>
+<button data-v="sum" onclick="setView('sum')"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>สรุป</button>
+</nav>
+<div id="modal"></div>
+<div id="toast"></div>
+<div id="viewer"></div>
+
+<script>
+const DAYS=['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
+const DS=['จ','อ','พ','พฤ','ศ','ส','อา'];
+const COLORS=['#4f46e5','#e11d48','#059669','#d97706','#0891b2','#9333ea','#db2777','#65a30d'];
+const KEY='studytracker.v1';
+const $=s=>document.querySelector(s);
+const uid=()=>Math.random().toString(36).slice(2,9);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const DEFPER=[['0','08:00','08:40'],['1','08:40','09:30'],['2','09:30','10:20'],['3','10:20','11:10'],['4','11:10','12:00'],['5','12:00','12:50',1],['6','12:50','13:40'],['7','13:40','14:30'],['8','14:30','15:20'],['9','15:20','16:10']].map(a=>({n:a[0],s:a[1],e:a[2],brk:!!a[3]}));
+function blank(){return{periods:DEFPER.map(p=>Object.assign({},p)),subjects:[],slots:[],extras:[],logs:[],notes:[],settings:{notify:false,lead:10,theme:'sea',mode:'auto',imgOn:true,imgZoom:true,imgPin:true,imgMeta:true,pinId:null,pinOpen:true,chkRemind:true,attAuto:true,attWarn:true,attMin:80},images:[],att:{},timer:null,notified:{}}}
+function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&Array.isArray(d.subjects))return Object.assign(blank(),d,{settings:Object.assign(blank().settings,d.settings||{})})}catch(e){}return blank()}
+let LSOK=true;try{localStorage.setItem('st.t','1');localStorage.removeItem('st.t')}catch(e){LSOK=false}
+let S=load();
+let _sw=0;function save(){if(!LSOK)return;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){if(!_sw){_sw=1;toast('บันทึกข้อมูลไม่ได้ (พื้นที่เต็ม?)')}}}
+
+/* ---------- date helpers ---------- */
+const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const pd=s=>{const[a,b,c]=s.split('-').map(Number);return new Date(a,b-1,c)};
+const addD=(s,n)=>{const d=pd(s);d.setDate(d.getDate()+n);return ymd(d)};
+const weekStart=s=>{const d=pd(s);d.setDate(d.getDate()-((d.getDay()+6)%7));return ymd(d)};
+const today=()=>ymd(new Date());
+const fmtDate=(s,o)=>pd(s).toLocaleDateString('th-TH',o||{weekday:'long',day:'numeric',month:'long'});
+const tm=s=>{const[h,m]=s.split(':').map(Number);return h*60+m};
+const hm=t=>String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');
+function fmtMin(m){m=Math.round(m);const h=Math.floor(m/60),r=m%60;if(h&&r)return h+' ชม. '+r+' น.';if(h)return h+' ชม.';return r+' น.'}
+const el=ms=>{const s=Math.floor(ms/1000);return[Math.floor(s/3600),Math.floor(s/60)%60,s%60].map(x=>String(x).padStart(2,'0')).join(':')};
+
+/* ---------- data helpers ---------- */
+const sub=id=>S.subjects.find(s=>s.id===id)||{id,name:'(ลบวิชาแล้ว)',color:'#94a3b8',goal:0};
+const subOpts=sel=>S.subjects.map(s=>`<option value="${s.id}" ${s.id===sel?'selected':''}>${esc(s.name)}</option>`).join('');
+function sessionsOn(date){
+  const dow=pd(date).getDay();
+  const a=S.slots.filter(x=>x.dow===dow).map(x=>({key:'s'+x.id,id:x.id,kind:'s',sub:x.sub,start:x.start,end:x.end,room:x.room||'',teacher:x.teacher||'',date}));
+  const b=S.extras.filter(x=>x.date===date).map(x=>({key:'e'+x.id,id:x.id,kind:'e',sub:x.sub,start:x.start,end:x.end,room:x.room||'',teacher:x.teacher||'',date}));
+  return a.concat(b).sort((p,q)=>p.start.localeCompare(q.start));
+}
+function sessInfo(sk){if(!sk)return null;const id=sk.slice(1);return(sk[0]==='s'?S.slots:S.extras).find(x=>x.id===id)||null}
+const minsFor=(d,k)=>S.logs.filter(l=>l.date===d&&l.sk===k).reduce((a,l)=>a+l.min,0);
+const dayMins=d=>S.logs.filter(l=>l.date===d).reduce((a,l)=>a+l.min,0);
+const rangeMins=(a,b)=>S.logs.filter(l=>l.date>=a&&l.date<=b).reduce((t,l)=>t+l.min,0);
+function streak(){let d=today(),n=0;if(!dayMins(d))d=addD(d,-1);while(dayMins(d)>0){n++;d=addD(d,-1)}return n}
+
+/* ---------- ui state ---------- */
+let view='today',curDate=today(),schedMode='period',schedDate=today(),sumMode='week',sumDate=today();
+let noteFilter={q:'',sub:'',pending:false};
+let toastT;
+function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(toastT);toastT=setTimeout(()=>t.style.display='none',2600)}
+function modal(h){const m=$('#modal');m.innerHTML=`<div class="bk" onclick="if(event.target===this)closeM()"><div class="sheet">${h}</div></div>`;m.style.display='block';hydrate(m)}
+function ask(msg,fn,label){
+  let a=document.getElementById('ask');if(!a){a=document.createElement('div');a.id='ask';document.body.appendChild(a)}
+  window._askFn=fn;
+  a.innerHTML=`<div class="bk" style="z-index:80;align-items:center;padding:20px" onclick="if(event.target===this)askNo()"><div class="sheet" style="border-radius:18px;max-width:360px;padding:20px"><p style="margin:0 0 4px;font-size:16px;font-weight:600;line-height:1.5">${esc(msg)}</p><div class="acts" style="justify-content:flex-end"><button class="btn o" onclick="askNo()">ยกเลิก</button><button class="btn d" onclick="askYes()">${esc(label||'ตกลง')}</button></div></div></div>`;
+}
+function askNo(){const a=document.getElementById('ask');if(a)a.innerHTML='';window._askFn=null}
+function askYes(){const f=window._askFn;askNo();if(f)f()}
+function closeM(){const m=$('#modal');m.style.display='none';m.innerHTML=''}
+function setView(v){view=v;render();window.scrollTo(0,0)}
+
+function render(){
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===view));
+  const tb=S.timer?`<div class="tbar"><b>⏱ ${esc(sub(S.timer.sub).name)}</b><span class="mono" id="tel">${el(Date.now()-S.timer.ts)}</span><span><button class="btn s" onclick="stopTimer()">หยุด</button> <button class="btn s o" onclick="cancelTimer()">✕</button></span></div>`:'';
+  $('#app').innerHTML=tb+({today:rToday,sched:rSched,notes:rNotes,sum:rSum}[view])();hydrate($('#app'));
+}
+
+/* ---------- TODAY ---------- */
+function onboarding(){return`<div class="card"><h3 style="margin:0 0 6px">เริ่มต้นใช้งาน 👋</h3><p class="muted" style="margin:0 0 10px">1) เพิ่มวิชา/กิจกรรม &nbsp;2) สร้างตารางเรียน (กดสร้างอัตโนมัติได้) &nbsp;3) จับเวลา + จดโน้ตทุกคาบ</p><div class="acts"><button class="btn" onclick="openSubjects()">+ เพิ่มวิชา</button><button class="btn o" onclick="loadSchool()">โหลดตาราง ม.6/5</button><button class="btn o" onclick="addSample()">ข้อมูลตัวอย่าง</button></div></div>`}
+const IC={play:'<svg class="ic" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>',stop:'<svg class="ic" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5" fill="currentColor"/></svg>'};
+function card(x,nk){
+  const s=sub(x.sub),m=minsFor(x.date,x.key),run=S.timer&&S.timer.sk===x.key&&S.timer.date===x.date,nn=S.notes.filter(n=>n.date===x.date&&n.sk===x.key).length;
+  let pill='';
+  if(x.date===today()){const t=new Date(),nm=t.getHours()*60+t.getMinutes();if(nm>=tm(x.start)&&nm<tm(x.end))pill='<span class="pill now">กำลังเรียน</span>';else if(x.key===nk)pill='<span class="pill">ถัดไป</span>'}
+  return`<div class="ss ${run?'run':''}"><div class="tm"><b>${x.start}</b><span>${x.end}</span></div><i class="bar2" style="background:${s.color}"></i>
+<div class="mid"><div class="row gap" style="flex-wrap:wrap"><b>${esc(s.name)}</b>${pill}</div><div class="muted sm">${x.teacher?esc(x.teacher)+' · ':''}${x.room?esc(x.room)+' · ':''}${x.kind==='e'?'ครั้งเดียว · ':''}${m?'เรียนแล้ว '+fmtMin(m):'ยังไม่บันทึกเวลา'}${nn?' · โน้ต '+nn:''}</div>
+<div class="tl"><button onclick="openLog('${x.sub}','${x.key}','${x.date}')">+ เวลา</button><button onclick="openNote(null,{date:'${x.date}',sk:'${x.key}',sub:'${x.sub}'})">โน้ต</button></div>${attRow(x)}</div>
+<button class="go ${run?'stop':''}" aria-label="${run?'หยุด':'เริ่มจับเวลา'}" onclick="${run?'stopTimer()':`startTimer('${x.sub}','${x.key}','${x.date}')`}">${run?IC.stop:IC.play}</button></div>`;
+}
+function rToday(){
+  if(!S.subjects.length)return onboarding();
+  const isT=curDate===today(),t=new Date(),nm=t.getHours()*60+t.getMinutes();
+  const ss=sessionsOn(curDate),nk=isT?(ss.find(x=>tm(x.start)>nm)||{}).key:null;
+  const ws=weekStart(curDate),we=addD(ws,6),wk=rangeMins(ws,we),goal=S.subjects.reduce((a,x)=>a+(x.goal||0),0)*60,free=S.logs.filter(l=>l.date===curDate&&!l.sk);
+  return`<div class="hero"><div><small>${fmtDate(curDate,{weekday:'long'})}${isT?' · วันนี้':''}</small><h2>${fmtDate(curDate,{day:'numeric',month:'long'})}</h2></div><div class="nv"><button class="ib" onclick="goD(-1)" aria-label="ก่อนหน้า">‹</button>${isT?'':'<button class="ib" onclick="curDate=today();render()" style="padding:0 12px;font-size:13px;font-weight:600">วันนี้</button>'}<button class="ib" onclick="goD(1)" aria-label="ถัดไป">›</button></div></div>
+<div class="st"><div><b>${fmtMin(dayMins(curDate))}</b><span>วันนี้</span></div><div><b>${fmtMin(wk)}</b><span>สัปดาห์นี้</span></div><div><b>${streak()} วัน</b><span>ต่อเนื่อง</span></div></div>
+${storageBanner()}${lowWarn()}${goal?`<div class="bar" style="margin:0 0 6px"><i style="width:${Math.min(100,wk/goal*100)}%;background:var(--pri)"></i></div><div class="muted sm" style="margin-bottom:6px">เป้าหมายสัปดาห์ ${Math.round(wk/goal*100)}% · ${fmtMin(wk)} / ${fmtMin(goal)}</div>`:''}
+${ss.length?ss.map(x=>card(x,nk)).join(''):`<div class="empty">ไม่มีคาบในวันนี้<div class="acts" style="justify-content:center"><button class="btn s" onclick="openSlot(null,null,{date:'${curDate}'})">+ เพิ่มคาบ</button></div></div>`}
+<div class="card"><div class="row between"><b>เรียนนอกตาราง</b><button class="btn s o" onclick="openLog('',null,'${curDate}')">+ บันทึกเวลา</button></div>
+${free.map(l=>`<div class="row between li"><span><i class="dot" style="background:${sub(l.sub).color}"></i> ${esc(sub(l.sub).name)} · ${fmtMin(l.min)}</span><button class="lnk" onclick="delLog('${l.id}')">ลบ</button></div>`).join('')||'<div class="muted sm" style="margin-top:6px">ยังไม่มีรายการ</div>'}</div>
+<div class="acts"><button class="btn o" style="width:100%" onclick="openNote(null,{date:'${curDate}'})">+ จดโน้ตของวัน</button></div>`;
+}
+function goD(n){curDate=addD(curDate,n);render()}
+function goDay(d){curDate=d;setView('today')}
+
+/* timer */
+function startTimer(sb,sk,date){if(S.timer){toast('มีตัวจับเวลาที่กำลังทำงานอยู่');return}S.timer={sub:sb,sk,date,ts:Date.now()};save();render()}
+function stopTimer(){if(!S.timer)return;const m=Math.max(1,Math.round((Date.now()-S.timer.ts)/60000));S.logs.push({id:uid(),date:S.timer.date,sub:S.timer.sub,sk:S.timer.sk,min:m,src:'timer'});S.timer=null;save();render();toast('บันทึกแล้ว '+fmtMin(m))}
+function cancelTimer(){ask('ยกเลิกตัวจับเวลา (ไม่บันทึกเวลา)?',()=>{S.timer=null;save();render()},'ยกเลิกจับเวลา')}
+
+/* log modal */
+function openLog(sb,sk,date){
+  if(!S.subjects.length){toast('เพิ่มวิชาก่อน');return openSubjects()}
+  const ex=sk?S.logs.filter(l=>l.date===date&&l.sk===sk):[];
+  modal(`<h3>บันทึกเวลาเรียน</h3>
+<label>วิชา<select id="l_sub" ${sk?'disabled':''}>${subOpts(sb||S.subjects[0].id)}</select></label>
+<label>วันที่<input type="date" id="l_date" value="${date}" ${sk?'disabled':''}></label>
+<div class="row gap"><label class="f1">ชั่วโมง<input type="number" id="l_h" min="0" max="24" value="0" inputmode="numeric"></label><label class="f1">นาที<input type="number" id="l_m" min="0" max="59" value="30" inputmode="numeric"></label></div>
+<div class="chips">${[15,30,45,60,90,120].map(v=>`<button class="chip" onclick="qm(${v})">${fmtMin(v)}</button>`).join('')}</div>
+${ex.length?`<div style="margin-top:12px"><span class="muted sm">รายการที่บันทึกแล้ว</span>${ex.map(l=>`<div class="row between li"><span>${fmtMin(l.min)}${l.src==='timer'?' ⏱':''}</span><button class="lnk" onclick="delLog('${l.id}','${sb}','${sk}','${date}')">ลบ</button></div>`).join('')}</div>`:''}
+<div class="acts"><button class="btn" onclick="saveLog('${sb||''}','${sk||''}','${date}')">บันทึก</button><button class="btn o" onclick="closeM()">ปิด</button></div>`);
+}
+function qm(v){$('#l_h').value=Math.floor(v/60);$('#l_m').value=v%60}
+function saveLog(sb,sk,date){
+  const m=(+$('#l_h').value||0)*60+(+$('#l_m').value||0);
+  if(m<=0)return toast('กรอกเวลามากกว่า 0');
+  S.logs.push({id:uid(),date:sk?date:$('#l_date').value,sub:sk?sb:$('#l_sub').value,sk:sk||null,min:m,src:'manual'});
+  save();closeM();render();toast('บันทึก '+fmtMin(m)+' แล้ว');
+}
+function delLog(id,sb,sk,date){S.logs=S.logs.filter(l=>l.id!==id);save();render();if(sk)openLog(sb,sk,date)}
+
+/* ---------- SCHEDULE ---------- */
+function rSched(){
+  const M=[['period','คาบ'],['week','เวลา'],['list','รายการ'],['month','เดือน']];
+  const head=`<div class="seg">${M.map(([k,t])=>`<button class="${schedMode===k?'on':''}" onclick="schedMode='${k}';render()">${t}</button>`).join('')}</div>
+<div class="tb" style="flex-wrap:wrap"><button class="btn s o" onclick="openSubjects()">วิชา</button><button class="btn s o" onclick="openAuto()">สร้างอัตโนมัติ</button>${schedMode==='period'?'<button class="btn s o" onclick="openPeriods()">เวลาคาบ</button>':''}${S.settings.imgOn?`<button class="btn s o" onclick="openImages()">ภาพตาราง${S.images.length?' ('+S.images.length+')':''}</button>`:''}<button class="btn s" onclick="openSlot()">+ คาบ</button></div>`;
+  return head+pinnedBox()+(schedMode==='period'?periodV():schedMode==='week'?gridV():schedMode==='list'?weekV():monthV());
+}
+const FULLD=['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสฯ','ศุกร์','เสาร์'];
+function slotPeriod(x){
+  const P=S.periods,a=tm(x.start),b=tm(x.end),f=P.findIndex(p=>a>=tm(p.s)&&a<tm(p.e));
+  if(f<0)return null;let l=f;for(let i=f+1;i<P.length;i++){if(tm(P[i].s)<b)l=i;else break}
+  return[f,l];
+}
+function periodV(){
+  const P=S.periods,n=new Date(),nm=n.getHours()*60+n.getMinutes(),td=n.getDay();
+  const order=[1,2,3,4,5].concat(S.slots.some(x=>x.dow===6)?[6]:[],S.slots.some(x=>x.dow===0)?[0]:[]);
+  const cur=P.findIndex(p=>nm>=tm(p.s)&&nm<tm(p.e));
+  const ptime=p=>p.s.replace(':','.')+'<br>'+p.e.replace(':','.');
+  let h=`<div class="pt"><table class="ptab"><thead><tr><th class="fc">ชั่วโมงที่</th>${P.map((p,i)=>`<th class="eh ${i===cur?'cur':''}" onclick="editPeriod(${i})">${esc(p.n)}</th>`).join('')}</tr><tr><th class="fc">เวลา</th>${P.map((p,i)=>`<th class="tm2 eh" onclick="editPeriod(${i})">${ptime(p)}</th>`).join('')}</tr></thead><tbody>`;
+  const other=[];
+  order.forEach(d=>{
+    const cells=Array(P.length).fill(null),skip=Array(P.length).fill(false);
+    S.slots.filter(x=>x.dow===d).sort((a,b)=>a.start.localeCompare(b.start)).forEach(x=>{
+      const r=slotPeriod(x);if(!r||cells[r[0]]||skip[r[0]]||P[r[0]].brk){other.push(x);return}
+      cells[r[0]]={x,span:r[1]-r[0]+1};for(let i=r[0]+1;i<=r[1];i++)skip[i]=true;
+    });
+    h+=`<tr class="${d===td?'tr-t':''}"><th class="fc">${FULLD[d]}</th>`;
+    P.forEach((p,i)=>{
+      if(skip[i])return;
+      if(p.brk){h+='<td class="brk">พักเที่ยง</td>';return}
+      const c=cells[i];
+      if(c){const x=c.x,sb=sub(x.sub),isNow=d===td&&nm>=tm(x.start)&&nm<tm(x.end);
+        h+=`<td colspan="${c.span}" onclick="openSlot('s','${x.id}')"><div class="pc ${isNow?'now':''}" style="background:${sb.color}1f;border-color:${sb.color}"><b>${esc(sb.name)}</b>${x.teacher?`<span>${esc(x.teacher)}</span>`:''}${x.room?`<em>${esc(x.room)}</em>`:''}</div></td>`}
+      else h+=`<td class="emp" onclick="openSlot(null,null,{dow:${d},start:'${p.s}',end:'${p.e}'})">+</td>`;
+    });
+    h+='</tr>';
+  });
+  h+='</tbody></table></div>';
+  const empty=!S.slots.length?`<div class="card"><b>ยังไม่มีตาราง</b><p class="muted sm" style="margin:4px 0 0">แตะช่อง + ในตารางเพื่อเพิ่มคาบ หรือโหลดตารางจากรูปที่ให้มา</p><div class="acts"><button class="btn s" onclick="loadSchool()">โหลดตาราง ม.6/5</button><button class="btn s o" onclick="openAuto()">สร้างอัตโนมัติ</button></div></div>`:'';
+  const oth=other.length?`<div class="card"><b>คาบที่เวลาไม่ตรงกับช่องคาบ</b>${other.map(x=>`<div class="row between li" onclick="openSlot('s','${x.id}')" style="cursor:pointer"><span><i class="dot" style="background:${sub(x.sub).color}"></i> ${esc(sub(x.sub).name)} · ${FULLD[x.dow]} ${x.start}–${x.end}</span><span class="lnk">แก้ไข</span></div>`).join('')}</div>`:'';
+  return empty+h+oth+'<p class="muted sm">แตะเลขคาบหรือเวลาด้านบนเพื่อแก้เวลา · แตะช่องว่างเพื่อเพิ่มคาบ · แตะคาบเพื่อแก้ไข · เลื่อนซ้าย-ขวาเพื่อดูคาบอื่น · คาบแบบครั้งเดียวดูในโหมด "รายการ"</p>';
+}
+function readPeriods(){return S.periods.map((p,i)=>({n:$('#pn'+i).value.trim()||String(i),s:$('#ps'+i).value||p.s,e:$('#pe'+i).value||p.e,brk:$('#pb'+i).checked}))}
+function openPeriods(){
+  modal(`<h3>ตั้งเวลาคาบ</h3><p class="muted sm" style="margin:0">กำหนดช่วงเวลาของแต่ละคาบ เป็นคอลัมน์ในตาราง</p>
+${S.periods.map((p,i)=>`<div class="row gap li"><input id="pn${i}" value="${esc(p.n)}" style="width:48px;margin:0;flex:none;padding:9px 6px;text-align:center"><input type="time" id="ps${i}" value="${p.s}" style="margin:0;min-width:0;padding:9px 6px"><input type="time" id="pe${i}" value="${p.e}" style="margin:0;min-width:0;padding:9px 6px"><label class="row" style="margin:0;gap:3px;color:var(--text);white-space:nowrap"><input type="checkbox" id="pb${i}" style="width:auto;margin:0" ${p.brk?'checked':''}>พัก</label><button class="lnk" onclick="delPeriod(${i})">ลบ</button></div>`).join('')}
+<div class="acts"><button class="btn s o" onclick="addPeriod()">+ เพิ่มคาบ</button></div>
+<div class="acts"><button class="btn" onclick="savePeriods()">บันทึก</button><button class="btn o" onclick="closeM()">ปิด</button></div>`);
+}
+function migrate(oldP,newP){
+  const mv=[];for(let k=0;k<Math.min(oldP.length,newP.length);k++){const o=oldP[k],n=newP[k];if(o.s!==n.s||o.e!==n.e)S.slots.forEach(x=>{if(x.start===o.s&&x.end===o.e)mv.push([x,n.s,n.e])})}
+  mv.forEach(([x,a,b])=>{x.start=a;x.end=b});
+}
+function editPeriod(i){
+  const p=S.periods[i];if(!p)return;
+  modal(`<h3>แก้ไขคาบที่ ${esc(p.n)}</h3>
+<label>ชื่อ/เลขคาบ<input id="ep_n" value="${esc(p.n)}"></label>
+<div class="row gap"><label class="f1">เริ่ม<input type="time" id="ep_s" value="${p.s}"></label><label class="f1">สิ้นสุด<input type="time" id="ep_e" value="${p.e}"></label></div>
+<label class="row gap" style="color:var(--text)"><input type="checkbox" id="ep_b" style="width:auto;margin:0" ${p.brk?'checked':''}>เป็นช่วงพัก (ไม่มีเรียน)</label>
+<p class="muted sm">วิชาที่อยู่ในคาบนี้จะย้ายตามเวลาใหม่ให้อัตโนมัติ</p>
+<div class="acts"><button class="btn" onclick="saveOnePeriod(${i})">บันทึก</button><button class="btn o" onclick="openPeriods()">แก้ทุกคาบ</button><button class="btn d" onclick="delOnePeriod(${i})">ลบคาบ</button></div>`);
+}
+function saveOnePeriod(i){
+  const n=$('#ep_n').value.trim()||String(i),s=$('#ep_s').value,e=$('#ep_e').value;
+  if(!s||!e||tm(e)<=tm(s))return toast('เวลาสิ้นสุดต้องหลังเวลาเริ่ม');
+  const old=S.periods.map(q=>Object.assign({},q));
+  S.periods[i]={n,s,e,brk:$('#ep_b').checked};
+  migrate(old,S.periods);save();closeM();render();
+}
+function delOnePeriod(i){
+  return ask('ลบคาบนี้? วิชาในคาบนี้จะไปอยู่ในรายการ "เวลาไม่ตรงกับช่องคาบ"',()=>delOnePeriodGo(i),'ลบ');}
+function delOnePeriodGo(i){
+  S.periods.splice(i,1);save();closeM();render();
+}
+function addPeriod(){const old=S.periods.map(q=>Object.assign({},q)),c=readPeriods(),l=c[c.length-1],st=l?l.e:'08:00',m=Math.min(tm(st)+50,1439);c.push({n:String(c.length),s:st,e:hm(m),brk:false});migrate(old,c);S.periods=c;save();openPeriods()}
+function delPeriod(i){const old=S.periods.filter((_,k)=>k!==i).map(q=>Object.assign({},q)),c=readPeriods();c.splice(i,1);migrate(old,c);S.periods=c;save();openPeriods()}
+function savePeriods(){const c=readPeriods();if(c.some(p=>tm(p.e)<=tm(p.s)))return toast('เวลาสิ้นสุดต้องหลังเวลาเริ่ม');migrate(S.periods,c);S.periods=c;save();closeM();render()}
+function loadSchool(){
+  if(S.slots.length)return ask('มีตารางอยู่แล้ว จะเพิ่มคาบจากตาราง ม.6/5 เข้าไปอีก (อาจซ้ำกัน) ต่อไหม?',loadSchoolGo,'เพิ่มเข้าไป');
+  loadSchoolGo();}
+function loadSchoolGo(){
+  const HR='ต้านทุจริต||HR, PM',SELF='ชั่วโมงศึกษาด้วยตนเอง||',INT='ง33218||เฉพาะนร.ที่สนใจ';
+  const T={
+    1:[HR,'แนะแนว|ครูยลดา|238','ค33102|ครูจินตนาพร|341','อ33102|ครูอัญชนา|328',SELF,'','ว33296|ครูฐานันดร|คอมฯ3','ว33104|ครูศิริลักษณ์|คอมฯ1','ค33202|ครูวีระศักดิ์|345',''],
+    2:[HR,'ว30105|ครูศิริพร|725','อ33102|ครูอัญชนา|328','ท33102|ครูธัญวรัตน์|426','ค33202|ครูวีระศักดิ์|345','','ส33104|ครูภาวดี|442','E-สื่อสาร|ครู Cobus|235',SELF,''],
+    3:[HR,'ส33103|ครูอำนวย|447','พ33102|ครูอัศวิน|432','อ33202|ครูพันธุ์ปวีร์|327','ค33202|ครูวีระศักดิ์|345','','ว30112|ครูวิมลฉัตร|731','ว30112|ครูวิมลฉัตร|731','ศ33102|ครูพรฤดี|214',INT],
+    4:[HR,'ว30112|ครูวิมลฉัตร|731','ว30105|ครูศิริพร|725','ว30105|ครูศิริพร|725',INT,'','ว30107|ครูนวกานต์|733','ค33202|ครูวีระศักดิ์|345','กิจกรรมชุมนุม||',INT],
+    5:[HR,'ส33103|ครูอำนวย|447','ค33102|ครูจินตนาพร|342','ว30107|ครูนวกานต์|733','ว30107|ครูนวกานต์|733','','อ33202|ครูพันธุ์ปวีร์|327','ท33102|ครูธัญวรัตน์|426','กิจกรรมโฮมรูม+จิตสาธารณะ||',INT]
+  };
+  S.periods=DEFPER.map(q=>Object.assign({},q));
+  const SPECIAL=['ต้านทุจริต','ชั่วโมงศึกษาด้วยตนเอง','กิจกรรมชุมนุม','กิจกรรมโฮมรูม+จิตสาธารณะ','แนะแนว'];
+  Object.keys(T).forEach(d=>T[d].forEach((e,i)=>{
+    if(!e)return;const[name,teacher,room]=e.split('|');
+    let sb=S.subjects.find(x=>x.name===name);
+    if(!sb){sb={id:uid(),name,color:SPECIAL.includes(name)?'#94a3b8':COLORS[S.subjects.length%COLORS.length],goal:0};S.subjects.push(sb)}
+    S.slots.push({id:uid(),sub:sb.id,dow:+d,start:DEFPER[i].s,end:DEFPER[i].e,room:room||'',teacher:teacher||''});
+  }));
+  save();schedMode='period';view='sched';render();toast('โหลดตาราง ม.6/5 แล้ว');
+}
+function gridV(){
+  const ws=weekStart(schedDate),days=[0,1,2,3,4,5,6].map(i=>addD(ws,i)),ses=days.map(sessionsOn);
+  let lo=8,hi=18;ses.forEach(a=>a.forEach(x=>{lo=Math.min(lo,Math.floor(tm(x.start)/60));hi=Math.max(hi,Math.ceil(tm(x.end)/60))}));
+  const PH=46,H=(hi-lo)*PH,n=new Date(),nm=n.getHours()*60+n.getMinutes();
+  const nav=`<div class="row between" style="margin:10px 0 8px"><button class="ib" onclick="schedDate=addD(schedDate,-7);render()">‹</button><b>${fmtDate(ws,{day:'numeric',month:'short'})} – ${fmtDate(addD(ws,6),{day:'numeric',month:'short'})}</b><button class="ib" onclick="schedDate=addD(schedDate,7);render()">›</button></div>`;
+  const hd=`<div class="tg"><div></div>${days.map((d,i)=>`<div class="tgh ${d===today()?'t':''}" onclick="goDay('${d}')"><span>${DS[i]}</span><b>${pd(d).getDate()}</b></div>`).join('')}</div>`;
+  let lab='';for(let h=lo;h<=hi;h++)lab+=`<i style="top:${(h-lo)*PH}px">${h}</i>`;
+  const cols=days.map((d,i)=>{
+    let b=ses[i].map(x=>{const top=(tm(x.start)-lo*60)/60*PH,ht=Math.max(18,(tm(x.end)-tm(x.start))/60*PH-2),c=sub(x.sub).color;
+      return`<div class="blk" style="top:${top}px;height:${ht}px;background:${c}24;border-color:${c}" onclick="openSlot('${x.kind}','${x.id}')"><b>${esc(sub(x.sub).name)}</b>${ht>=36?`<span>${x.start}</span>`:''}</div>`}).join('');
+    if(d===today()&&nm>=lo*60&&nm<=hi*60)b+=`<div class="nowl" style="top:${(nm-lo*60)/60*PH}px"></div>`;
+    return`<div class="tc" style="height:${H}px;--ph:${PH}px">${b}</div>`}).join('');
+  return nav+hd+`<div class="tg" style="margin-top:10px"><div class="tt" style="height:${H}px">${lab}</div>${cols}</div><p class="muted sm">แตะบล็อกเพื่อแก้ไข · แตะวันที่เพื่อดูรายละเอียด</p>`;
+}
+function weekV(){
+  const ws=weekStart(schedDate);let h=`<div class="row between" style="margin-top:8px"><button class="ib" onclick="schedDate=addD(schedDate,-7);render()">‹</button><b>${fmtDate(ws,{day:'numeric',month:'short'})} – ${fmtDate(addD(ws,6),{day:'numeric',month:'short'})}</b><button class="ib" onclick="schedDate=addD(schedDate,7);render()">›</button></div>`;
+  for(let i=0;i<7;i++){
+    const d=addD(ws,i),ss=sessionsOn(d);
+    h+=`<div class="dayh ${d===today()?'t':''}"><span>${DAYS[pd(d).getDay()]} ${pd(d).getDate()}</span><span><button class="lnk" onclick="goDay('${d}')">ดู ›</button> <button class="lnk" onclick="openSlot(null,null,{date:'${d}'})">+ เพิ่ม</button></span></div>`;
+    h+=ss.map(x=>{const m=minsFor(d,x.key);return`<div class="sl" onclick="openSlot('${x.kind}','${x.id}')"><i class="dot" style="background:${sub(x.sub).color}"></i><div class="f1"><b>${esc(sub(x.sub).name)}</b> <span class="muted sm">${x.start}–${x.end}${x.room?' · '+esc(x.room):''}${x.kind==='e'?' · ครั้งเดียว':''}</span></div><span class="sm">${(()=>{const a=attGet(d,x.key);return a?`<span class="tag" style="background:${ATT[a][1]}">${ATT[a][0]}</span> `:''})()}${m?fmtMin(m):''}</span></div>`}).join('')||'<div class="muted sm" style="margin-top:4px">— ว่าง —</div>';
+  }
+  return h;
+}
+function shiftMonth(which,n){const d=pd(which==='s'?schedDate:sumDate);d.setDate(1);d.setMonth(d.getMonth()+n);if(which==='s')schedDate=ymd(d);else sumDate=ymd(d);render()}
+function monthV(){
+  const d0=pd(schedDate),y=d0.getFullYear(),m=d0.getMonth(),first=new Date(y,m,1),n=new Date(y,m+1,0).getDate(),lead=(first.getDay()+6)%7;
+  let h=`<div class="row between" style="margin:8px 0"><button class="ib" onclick="shiftMonth('s',-1)">‹</button><b>${fmtDate(ymd(first),{month:'long',year:'numeric'})}</b><button class="ib" onclick="shiftMonth('s',1)">›</button></div><div class="grid">${DS.map(x=>`<div class="gh">${x}</div>`).join('')}`;
+  for(let i=0;i<lead;i++)h+='<div class="cell x"></div>';
+  for(let d=1;d<=n;d++){
+    const ds=ymd(new Date(y,m,d)),ss=sessionsOn(ds),cols=[...new Set(ss.map(x=>x.sub))].slice(0,4),mm=dayMins(ds);
+    h+=`<div class="cell ${ds===today()?'t':''}" onclick="goDay('${ds}')"><b>${d}</b><div class="dots">${cols.map(c=>`<i class="dot" style="background:${sub(c).color}"></i>`).join('')}</div><div class="dots">${ss.map(x=>attGet(ds,x.key)).filter(Boolean).map(k=>`<i class="sq" style="background:${ATT[k][1]}"></i>`).join('')}</div>${mm?`<div class="mm">${(mm/60).toFixed(1)}ชม.</div>`:''}</div>`;
+  }
+  return h+'</div><p class="muted sm">แตะวันที่เพื่อดูรายละเอียด · จุดกลม = วิชาที่มีเรียน · สี่เหลี่ยม = สถานะเข้าเรียน · ตัวเลข = ชั่วโมงที่เรียนจริง</p>'+attLegend();
+}
+
+/* subjects */
+let subColor=COLORS[0];
+function openSubjects(){
+  modal(`<h3>วิชา / กิจกรรม</h3>${S.subjects.map(s=>`<div class="row between li"><div class="row gap"><i class="dot" style="background:${s.color}"></i><div><b>${esc(s.name)}</b><div class="muted sm">เป้าหมาย ${s.goal||0} ชม./สัปดาห์</div></div></div><button class="btn s o" onclick="editSub('${s.id}')">แก้ไข</button></div>`).join('')||'<p class="muted">ยังไม่มีวิชา</p>'}<div class="acts"><button class="btn" onclick="editSub()">+ เพิ่มวิชา</button><button class="btn o" onclick="closeM()">ปิด</button></div>`);
+}
+function editSub(id){
+  const s=id?S.subjects.find(x=>x.id===id):null;subColor=s?s.color:COLORS[S.subjects.length%COLORS.length];
+  modal(`<h3>${s?'แก้ไขวิชา':'เพิ่มวิชา'}</h3><label>ชื่อวิชา/กิจกรรม<input id="s_name" value="${esc(s&&s.name)}" placeholder="เช่น คณิตศาสตร์"></label>
+<label>สี</label><div class="pal">${COLORS.map(c=>`<button class="sw ${c===subColor?'on':''}" data-c="${c}" style="background:${c}" onclick="pickC('${c}')"></button>`).join('')}</div>
+<label>เป้าหมาย (ชั่วโมง/สัปดาห์)<input id="s_goal" type="number" min="0" step="0.5" value="${s?s.goal||0:3}" inputmode="decimal"></label>
+<div class="acts"><button class="btn" onclick="saveSub('${id||''}')">บันทึก</button>${s?`<button class="btn d" onclick="delSub('${id}')">ลบ</button>`:''}<button class="btn o" onclick="openSubjects()">กลับ</button></div>`);
+}
+function pickC(c){subColor=c;document.querySelectorAll('.sw').forEach(b=>b.classList.toggle('on',b.dataset.c===c))}
+function saveSub(id){
+  const name=$('#s_name').value.trim(),goal=+$('#s_goal').value||0;if(!name)return toast('ใส่ชื่อวิชา');
+  if(id){const s=S.subjects.find(x=>x.id===id);Object.assign(s,{name,color:subColor,goal})}else S.subjects.push({id:uid(),name,color:subColor,goal});
+  save();render();openSubjects();
+}
+function delSub(id){
+  return ask('ลบวิชานี้? คาบในตารางของวิชานี้จะถูกลบด้วย (ประวัติเวลาและโน้ตยังอยู่)',()=>delSubGo(id),'ลบ');}
+function delSubGo(id){
+  S.subjects=S.subjects.filter(s=>s.id!==id);S.slots=S.slots.filter(x=>x.sub!==id);S.extras=S.extras.filter(x=>x.sub!==id);
+  if(S.timer&&S.timer.sub===id)S.timer=null;save();render();openSubjects();
+}
+
+/* slot modal */
+let slotType='s';
+function openSlot(kind,id,pre){
+  if(!S.subjects.length){toast('เพิ่มวิชาก่อน');return openSubjects()}
+  pre=pre||{};const it=id?(kind==='s'?S.slots:S.extras).find(x=>x.id===id):null;
+  slotType=it?kind:'s';
+  const dow=it&&kind==='s'?it.dow:(pre.date?pd(pre.date).getDay():(pre.dow!=null?pre.dow:1));
+  const date=it&&kind==='e'?it.date:(pre.date||today());
+  modal(`<h3>${it?'แก้ไขคาบ':'เพิ่มคาบเรียน'}</h3>
+<div class="seg" style="margin-top:6px"><button id="t_s" class="${slotType==='s'?'on':''}" onclick="setST('s')">ซ้ำทุกสัปดาห์</button><button id="t_e" class="${slotType==='e'?'on':''}" onclick="setST('e')">ครั้งเดียว</button></div>
+<label>วิชา<select id="f_sub">${subOpts(it?it.sub:S.subjects[0].id)}</select></label>
+<div id="f_dowW" style="display:${slotType==='s'?'block':'none'}"><label>วัน<select id="f_dow">${[1,2,3,4,5,6,0].map(d=>`<option value="${d}" ${d===dow?'selected':''}>${DAYS[d]}</option>`).join('')}</select></label></div>
+<div id="f_dateW" style="display:${slotType==='e'?'block':'none'}"><label>วันที่<input type="date" id="f_date" value="${date}"></label></div>
+<div class="row gap"><label class="f1">เริ่ม<input type="time" id="f_st" value="${it?it.start:(pre.start||'16:00')}"></label><label class="f1">สิ้นสุด<input type="time" id="f_en" value="${it?it.end:(pre.end||'17:00')}"></label></div>
+<div class="row gap"><label class="f1">ห้อง<input id="f_rm" value="${esc(it&&it.room)}"></label><label class="f1">ครูผู้สอน<input id="f_tc" value="${esc(it&&it.teacher)}"></label></div>
+<div class="acts"><button class="btn" onclick="saveSlot('${it?kind:''}','${it?id:''}')">บันทึก</button>${it?`<button class="btn d" onclick="delSlot('${kind}','${id}')">ลบ</button>`:''}<button class="btn o" onclick="closeM()">ปิด</button></div>${it&&kind==='s'?'<p class="muted sm">คาบที่ซ้ำทุกสัปดาห์: การแก้ไขมีผลกับทุกสัปดาห์</p>':''}`);
+}
+function setST(t){slotType=t;$('#t_s').classList.toggle('on',t==='s');$('#t_e').classList.toggle('on',t==='e');$('#f_dowW').style.display=t==='s'?'block':'none';$('#f_dateW').style.display=t==='e'?'block':'none'}
+function saveSlot(ok,oid){
+  const sb=$('#f_sub').value,st=$('#f_st').value,en=$('#f_en').value,rm=$('#f_rm').value.trim(),tc=$('#f_tc').value.trim();
+  if(!st||!en||tm(en)<=tm(st))return toast('เวลาสิ้นสุดต้องหลังเวลาเริ่ม');
+  const nid=oid||uid();
+  if(oid){if(ok==='s')S.slots=S.slots.filter(x=>x.id!==oid);else S.extras=S.extras.filter(x=>x.id!==oid);
+    const o=ok+oid,n=slotType+nid;if(o!==n){S.logs.forEach(l=>{if(l.sk===o)l.sk=n});S.notes.forEach(l=>{if(l.sk===o)l.sk=n});Object.keys(S.att||{}).forEach(k=>{const i=k.indexOf('|');if(k.slice(i+1)===o){S.att[k.slice(0,i)+'|'+n]=S.att[k];delete S.att[k]}})}}
+  if(slotType==='s')S.slots.push({id:nid,sub:sb,dow:+$('#f_dow').value,start:st,end:en,room:rm,teacher:tc});
+  else{const dt=$('#f_date').value;if(!dt)return toast('เลือกวันที่');S.extras.push({id:nid,sub:sb,date:dt,start:st,end:en,room:rm,teacher:tc})}
+  save();closeM();render();
+}
+function delSlot(kind,id){return ask('ลบคาบนี้? (ประวัติเวลาและโน้ตเดิมยังคงอยู่)',()=>delSlotGo(kind,id),'ลบ')}
+function delSlotGo(kind,id){if(kind==='s')S.slots=S.slots.filter(x=>x.id!==id);else S.extras=S.extras.filter(x=>x.id!==id);save();closeM();render()}
+
+/* auto schedule */
+function openAuto(){
+  if(!S.subjects.length){toast('เพิ่มวิชาก่อน');return openSubjects()}
+  modal(`<h3>สร้างตารางอัตโนมัติ</h3><p class="muted sm" style="margin:0">ระบบจะกระจายคาบของแต่ละวิชาลงในวันและช่วงเวลาที่คุณเลือก</p>
+<label>วันที่ว่างเรียน</label><div class="days">${[1,2,3,4,5,6,0].map(d=>`<label><input type="checkbox" id="ad${d}" ${d>=1&&d<=5?'checked':''}>${DS[(d+6)%7]}</label>`).join('')}</div>
+<div class="row gap"><label class="f1">ตั้งแต่<input type="time" id="a_s" value="16:00"></label><label class="f1">ถึง<input type="time" id="a_e" value="20:00"></label></div>
+<div class="row gap"><label class="f1">ความยาวคาบ (นาที)<input type="number" id="a_l" value="60" min="15" step="5" inputmode="numeric"></label><label class="f1">พักระหว่างคาบ (นาที)<input type="number" id="a_b" value="10" min="0" step="5" inputmode="numeric"></label></div>
+<label>จำนวนคาบต่อสัปดาห์ของแต่ละวิชา</label>${S.subjects.map(s=>`<div class="row between li"><span><i class="dot" style="background:${s.color}"></i> ${esc(s.name)}</span><input type="number" id="au_${s.id}" value="${Math.max(1,Math.round(s.goal||2))}" min="0" max="14" style="width:80px;margin:0" inputmode="numeric"></div>`).join('')}
+<label>วิธีใส่ตาราง<select id="a_mode"><option value="replace">แทนที่ตารางประจำสัปดาห์เดิม</option><option value="append">เพิ่มต่อจากของเดิม</option></select></label>
+<div class="acts"><button class="btn" onclick="genAuto()">สร้างตาราง</button><button class="btn o" onclick="closeM()">ยกเลิก</button></div>`);
+}
+function genAuto(){
+  const days=[1,2,3,4,5,6,0].filter(d=>$('#ad'+d).checked),st=tm($('#a_s').value||'16:00'),en=tm($('#a_e').value||'20:00'),len=+$('#a_l').value||60,br=+$('#a_b').value||0;
+  if(!days.length)return toast('เลือกอย่างน้อย 1 วัน');if(len<=0||en<=st)return toast('ตรวจสอบช่วงเวลา');
+  const per=days.map(()=>{const a=[];for(let t=st;t+len<=en;t+=len+br)a.push(t);return a});
+  const maxN=Math.max(0,...per.map(a=>a.length)),order=[];
+  for(let i=0;i<maxN;i++)days.forEach((d,j)=>{if(per[j][i]!=null)order.push([d,per[j][i]])});
+  const cnt=S.subjects.map(s=>({id:s.id,n:+$('#au_'+s.id).value||0})),need=[];const mx=Math.max(0,...cnt.map(c=>c.n));
+  for(let k=0;k<mx;k++)cnt.forEach(c=>{if(k<c.n)need.push(c.id)});
+  if(!need.length)return toast('ใส่จำนวนคาบอย่างน้อย 1 วิชา');
+  if($('#a_mode').value==='replace')S.slots=[];
+  const fit=Math.min(need.length,order.length);
+  for(let i=0;i<fit;i++)S.slots.push({id:uid(),sub:need[i],dow:order[i][0],start:hm(order[i][1]),end:hm(order[i][1]+len),room:''});
+  save();closeM();schedMode='period';render();
+  toast(fit<need.length?`ช่องเวลาไม่พอ จัดได้ ${fit} จาก ${need.length} คาบ`:`สร้างตารางแล้ว ${fit} คาบ`);
+}
+
+/* ---------- NOTES ---------- */
+function rNotes(){
+  return`<div class="row gap" style="margin-bottom:6px"><input id="nq" placeholder="ค้นหาโน้ต…" value="${esc(noteFilter.q)}" oninput="noteFilter.q=this.value;refreshNotes()" style="margin:0"><button class="btn" onclick="openNote(null,{date:today()})" style="white-space:nowrap">+ โน้ต</button></div>
+<div class="row gap"><select onchange="noteFilter.sub=this.value;refreshNotes()" style="margin:0"><option value="">ทุกวิชา</option>${S.subjects.map(s=>`<option value="${s.id}" ${noteFilter.sub===s.id?'selected':''}>${esc(s.name)}</option>`).join('')}</select><label class="row gap" style="margin:0;white-space:nowrap;color:var(--text)"><input type="checkbox" style="width:auto;margin:0" ${noteFilter.pending?'checked':''} onchange="noteFilter.pending=this.checked;refreshNotes()">งานค้าง</label></div>
+<div id="nlist">${noteList()}</div>`;
+}
+function refreshNotes(){const e=$('#nlist');if(e)e.innerHTML=noteList()}
+function stars(r){return'★'.repeat(r)+'☆'.repeat(5-r)}
+function noteList(){
+  const q=noteFilter.q.trim().toLowerCase();
+  const L=S.notes.filter(n=>(!noteFilter.sub||n.sub===noteFilter.sub)&&(!noteFilter.pending||(n.todo&&!n.done))&&(!q||[n.learned,n.unclear,n.todo].some(t=>(t||'').toLowerCase().includes(q)))).sort((a,b)=>b.date.localeCompare(a.date)||0);
+  if(!L.length)return'<div class="empty">ยังไม่มีโน้ต<br>จดสรุปหลังเรียนแต่ละคาบได้ที่หน้า "วันนี้" หรือกด + โน้ต</div>';
+  return L.map(n=>{const s=sub(n.sub),si=sessInfo(n.sk);
+    return`<div class="card"><div class="row between"><div><span class="tag" style="background:${s.color}">${esc(s.name)}</span> <span class="muted sm">${fmtDate(n.date,{day:'numeric',month:'short'})}${si?' · '+si.start+'–'+si.end:''}</span></div>${n.rate?`<span style="color:#f59e0b">${stars(n.rate)}</span>`:''}</div>
+${n.learned?`<div style="margin-top:8px;white-space:pre-wrap">${esc(n.learned)}</div>`:''}
+${n.unclear?`<div style="margin-top:6px;white-space:pre-wrap"><span class="muted sm">❓ ไม่เข้าใจ:</span> ${esc(n.unclear)}</div>`:''}
+${n.todo?`<label class="row gap" style="margin-top:6px;color:var(--text);align-items:flex-start"><input type="checkbox" style="width:auto;margin:5px 0 0" ${n.done?'checked':''} onchange="toggleTodo('${n.id}')"><span class="${n.done?'muted':'pend'}" style="${n.done?'text-decoration:line-through':''};white-space:pre-wrap">${esc(n.todo)}</span></label>`:''}
+<div class="acts"><button class="btn s o" onclick="openNote('${n.id}')">แก้ไข</button></div></div>`}).join('');
+}
+function toggleTodo(id){const n=S.notes.find(x=>x.id===id);n.done=!n.done;save();refreshNotes()}
+let nr=0;
+const skOpts=(date,sel)=>'<option value="">— ไม่ผูกกับคาบ —</option>'+sessionsOn(date).map(x=>`<option value="${x.key}" data-sub="${x.sub}" ${x.key===sel?'selected':''}>${x.start} ${esc(sub(x.sub).name)}</option>`).join('');
+const rateBtns=()=>[1,2,3,4,5].map(i=>`<button class="star ${i<=nr?'on':''}" onclick="setR(${i})">★</button>`).join('');
+function openNote(id,pre){
+  if(!S.subjects.length){toast('เพิ่มวิชาก่อน');return openSubjects()}
+  const n=id?S.notes.find(x=>x.id===id):null,p=n||pre||{},date=p.date||today();nr=p.rate||0;
+  modal(`<h3>${n?'แก้ไขโน้ต':'โน้ต / สรุปคาบ'}</h3>
+<label>วันที่<input type="date" id="n_date" value="${date}" onchange="noteDate()"></label>
+<label>คาบ<select id="n_sk" onchange="noteSk()">${skOpts(date,p.sk)}</select></label>
+<label>วิชา<select id="n_sub">${subOpts(p.sub||S.subjects[0].id)}</select></label>
+<label>เรียนอะไร / สรุปเนื้อหา<textarea id="n_l" rows="4">${esc(p.learned)}</textarea></label>
+<label>ที่ยังไม่เข้าใจ<textarea id="n_u" rows="2">${esc(p.unclear)}</textarea></label>
+<label>งานที่ต้องทำ<textarea id="n_t" rows="2">${esc(p.todo)}</textarea></label>
+<div style="margin-top:10px"><span class="muted sm">ความเข้าใจคาบนี้</span><div id="n_r">${rateBtns()}</div></div>
+<div class="acts"><button class="btn" onclick="saveNote('${id||''}')">บันทึก</button>${n?`<button class="btn d" onclick="delNote('${id}')">ลบ</button>`:''}<button class="btn o" onclick="closeM()">ปิด</button></div>`);
+}
+function noteDate(){$('#n_sk').innerHTML=skOpts($('#n_date').value,'')}
+function noteSk(){const o=$('#n_sk').selectedOptions[0];if(o&&o.dataset.sub)$('#n_sub').value=o.dataset.sub}
+function setR(i){nr=nr===i?0:i;$('#n_r').innerHTML=rateBtns()}
+function saveNote(id){
+  const o={date:$('#n_date').value,sk:$('#n_sk').value||null,sub:$('#n_sub').value,learned:$('#n_l').value.trim(),unclear:$('#n_u').value.trim(),todo:$('#n_t').value.trim(),rate:nr};
+  if(!o.date)return toast('เลือกวันที่');if(!o.learned&&!o.unclear&&!o.todo)return toast('พิมพ์โน้ตอย่างน้อย 1 ช่อง');
+  if(id){const n=S.notes.find(x=>x.id===id);Object.assign(n,o);if(!o.todo)n.done=false}else S.notes.push(Object.assign({id:uid(),done:false},o));
+  save();closeM();render();toast('บันทึกโน้ตแล้ว');
+}
+function delNote(id){return ask('ลบโน้ตนี้?',()=>delNoteGo(id),'ลบ')}
+function delNoteGo(id){S.notes=S.notes.filter(n=>n.id!==id);save();closeM();render()}
+
+/* ---------- SUMMARY ---------- */
+function bars(vals,labels,showV){
+  const W=320,H=130,mx=Math.max(60,...vals),bw=(W-10)/vals.length;
+  return`<svg viewBox="0 0 ${W} ${H+34}" class="chart">`+vals.map((v,i)=>{const h=v/mx*H,x=5+i*bw;
+    return`<rect x="${x+bw*.15}" y="${H+14-h}" width="${bw*.7}" height="${v?Math.max(h,2):0}" rx="3" fill="var(--pri)"/>`+
+    (showV&&v?`<text x="${x+bw/2}" y="${H+10-h}" text-anchor="middle" font-size="9" fill="var(--text)">${(v/60).toFixed(1)}</text>`:'')+
+    (labels[i]?`<text x="${x+bw/2}" y="${H+28}" text-anchor="middle" font-size="9" fill="var(--muted)">${labels[i]}</text>`:'')}).join('')+`<line x1="0" y1="${H+14}" x2="${W}" y2="${H+14}" stroke="var(--line)"/></svg>`;
+}
+function rSum(){
+  if(!S.subjects.length)return onboarding();
+  let a,b;
+  if(sumMode==='week'){a=weekStart(sumDate);b=addD(a,6)}else{const d=pd(sumDate);a=ymd(new Date(d.getFullYear(),d.getMonth(),1));b=ymd(new Date(d.getFullYear(),d.getMonth()+1,0))}
+  const days=[];for(let d=a;d<=b;d=addD(d,1))days.push(d);
+  const vals=days.map(dayMins),total=vals.reduce((x,y)=>x+y,0),studied=vals.filter(v=>v>0).length;
+  const planned=days.reduce((t,d)=>t+sessionsOn(d).reduce((u,x)=>u+tm(x.end)-tm(x.start),0),0);
+  const inPlan=S.logs.filter(l=>l.sk&&l.date>=a&&l.date<=b).reduce((t,l)=>t+l.min,0);
+  const labels=sumMode==='week'?DS:days.map((d,i)=>((i+1)%5===0||i===0)?String(i+1):'');
+  const title=sumMode==='week'?`${fmtDate(a,{day:'numeric',month:'short'})} – ${fmtDate(b,{day:'numeric',month:'short'})}`:fmtDate(a,{month:'long',year:'numeric'});
+  const nav=sumMode==='week'?['sumDate=addD(sumDate,-7);render()','sumDate=addD(sumDate,7);render()']:["shiftMonth('m',-1)","shiftMonth('m',1)"];
+  const rows=S.subjects.map(s=>{
+    const m=S.logs.filter(l=>l.sub===s.id&&l.date>=a&&l.date<=b).reduce((t,l)=>t+l.min,0),goal=(s.goal||0)*60*days.length/7,p=goal?Math.min(100,m/goal*100):0;
+    const rs=S.notes.filter(n=>n.sub===s.id&&n.rate&&n.date>=a&&n.date<=b),av=rs.length?(rs.reduce((t,n)=>t+n.rate,0)/rs.length).toFixed(1):null;
+    return`<div class="li"><div class="row between"><span><i class="dot" style="background:${s.color}"></i> <b>${esc(s.name)}</b></span><span class="sm">${fmtMin(m)}${goal?' / '+fmtMin(goal):''}</span></div>${goal?`<div class="bar"><i style="width:${p}%;background:${s.color}"></i></div>`:''}${av?`<div class="muted sm">ความเข้าใจเฉลี่ย ${av}/5 (${rs.length} โน้ต)</div>`:''}</div>`}).join('');
+  return`<div class="seg"><button class="${sumMode==='week'?'on':''}" onclick="sumMode='week';render()">สัปดาห์</button><button class="${sumMode==='month'?'on':''}" onclick="sumMode='month';render()">เดือน</button></div>
+<div class="row between"><button class="ib" onclick="${nav[0]}">‹</button><b>${title}</b><button class="ib" onclick="${nav[1]}">›</button></div>
+<div class="stats"><div><b>${fmtMin(total)}</b><span>รวม</span></div><div><b>${studied} วัน</b><span>วันที่เรียน</span></div><div><b>${studied?fmtMin(total/studied):'-'}</b><span>เฉลี่ย/วัน</span></div></div>
+<div class="card"><b>ชั่วโมงเรียนรายวัน</b>${bars(vals,labels,sumMode==='week')}</div>
+${planned?`<div class="card"><div class="row between"><b>ทำตามตาราง</b><b>${Math.round(inPlan/planned*100)}%</b></div><div class="bar"><i style="width:${Math.min(100,inPlan/planned*100)}%;background:var(--pri)"></i></div><div class="muted sm" style="margin-top:4px">เรียนตามคาบ ${fmtMin(inPlan)} จากที่วางไว้ ${fmtMin(planned)}</div></div>`:''}
+<div class="card"><b>แยกตามวิชา</b> <span class="muted sm">(เทียบเป้าหมาย)</span>${rows}</div>${attCard()}`;
+}
+
+/* ---------- SETTINGS / BACKUP ---------- */
+const THEMES=[['sea','ฟ้าทะเล','#0284c7'],['mint','เขียวมิ้นต์','#059669'],['indigo','ม่วงอินดิโก','#4f46e5'],['pink','ชมพูพาสเทล','#db2777'],['orange','ส้มอุ่น','#ea580c'],['cream','ครีมสมุดโน้ต','#8c5a2b']];
+const chk=(k,t,sub)=>`<label class="row gap" style="color:var(--text);margin-top:8px;${sub?'padding-left:22px':''}"><input type="checkbox" style="width:auto;margin:0" ${S.settings[k]?'checked':''} onchange="setOpt('${k}',this.checked)">${t}</label>`;
+function openSettings(){
+  const st=S.settings,np='Notification' in window?Notification.permission:'unsupported';
+  modal(`<h3>ตั้งค่า</h3>
+<b class="sm">ธีมสี</b><div class="thm">${THEMES.map(([k,n,c])=>`<button class="th ${st.theme===k?'on':''}" data-k="${k}" onclick="setTheme('${k}')"><i style="background:${c}"></i>${n}</button>`).join('')}</div>
+<b class="sm" style="display:block;margin-top:14px">โหมดสว่าง / มืด</b><div class="seg" style="margin-top:6px">${[['auto','ตามระบบ'],['light','สว่าง'],['dark','มืด']].map(([k,n])=>`<button class="${st.mode===k?'on':''}" data-m="${k}" onclick="setMode('${k}')">${n}</button>`).join('')}</div>
+<b class="sm" style="display:block;margin-top:6px">ฟีเจอร์ภาพตาราง</b>${chk('imgOn','เปิดใช้ภาพตาราง (อัปโหลด/ลบหลายภาพ)')}${chk('imgZoom','ดูเต็มจอ + ซูม',1)}${chk('imgPin','ปักภาพไว้เหนือตาราง',1)}${chk('imgMeta','ตั้งชื่อ/โน้ตให้ภาพ',1)}
+${installBox()}
+<b class="sm" style="display:block;margin-top:16px">เช็คเข้าเรียน</b>${chk('chkRemind','เตือนให้เช็คหลังจบคาบ (เมื่อเปิดแอปค้างไว้)')}${chk('attAuto','บันทึกเวลาเรียนอัตโนมัติเมื่อเช็คว่ามา/สาย')}${chk('attWarn','เตือนเมื่อเข้าเรียนต่ำกว่าเกณฑ์')}<label style="padding-left:22px">เกณฑ์ขั้นต่ำ (%)<input type="number" min="1" max="100" value="${st.attMin||80}" inputmode="numeric" onchange="setNum('attMin',this.value)"></label>
+<b class="sm" style="display:block;margin-top:16px">แจ้งเตือน</b>
+<label class="row gap" style="color:var(--text)"><input type="checkbox" style="width:auto;margin:0" id="st_n" ${st.notify?'checked':''} onchange="setNotify(this.checked)">แจ้งเตือนก่อนเริ่มคาบ</label>
+<label>แจ้งก่อนเริ่ม<select id="st_l" onchange="S.settings.lead=+this.value;save()">${[5,10,15,30].map(v=>`<option value="${v}" ${st.lead===v?'selected':''}>${v} นาที</option>`).join('')}</select></label>
+<p class="muted sm">${np==='granted'?'✅ เบราว์เซอร์อนุญาตการแจ้งเตือนแล้ว':np==='unsupported'?'อุปกรณ์นี้ไม่รองรับแจ้งเตือนระบบ จะแสดงข้อความในแอปแทน':'ต้องอนุญาตแจ้งเตือนเมื่อเปิดสวิตช์'} · แจ้งเตือนทำงานเมื่อเปิดแอปค้างไว้</p>
+<div class="acts"><button class="btn o" onclick="openExport()">สำรองข้อมูล</button><button class="btn o" onclick="openImport()">นำเข้าข้อมูล</button></div>
+<div class="acts"><button class="btn d" onclick="resetAll()">ล้างข้อมูลทั้งหมด</button><button class="btn o" onclick="closeM()">ปิด</button></div>
+<p class="muted sm">ข้อมูลเก็บในเครื่องนี้เท่านั้น แนะนำให้สำรองเป็นระยะ · ไฟล์สำรองเก็บชื่อภาพแต่ไม่รวมไฟล์ภาพ</p>`);
+}
+function setOpt(k,v){S.settings[k]=v;save();render()}
+function setNum(k,v){S.settings[k]=Math.max(1,Math.min(100,+v||80));save();render()}
+function setTheme(k){S.settings.theme=k;save();applyTheme();document.querySelectorAll('.th').forEach(b=>b.classList.toggle('on',b.dataset.k===k))}
+function setMode(k){S.settings.mode=k;save();applyTheme();document.querySelectorAll('[data-m]').forEach(b=>b.classList.toggle('on',b.dataset.m===k))}
+function setNotify(on){S.settings.notify=on;save();if(on&&'Notification' in window&&Notification.permission==='default')Notification.requestPermission().then(openSettings)}
+const backupText=()=>JSON.stringify(S,null,1);
+function openExport(){
+  const t=backupText();let can=false;
+  try{can=!!(navigator.canShare&&typeof File!=='undefined'&&navigator.canShare({files:[new File([t],'x.json',{type:'application/json'})]}))}catch(e){}
+  modal(`<h3>สำรองข้อมูล</h3><p class="muted sm" style="margin:0">เลือกวิธีที่ใช้ได้บนอุปกรณ์ของคุณ</p>
+<div class="acts"><button class="btn" onclick="dlBackup()">ดาวน์โหลดไฟล์</button>${can?'<button class="btn o" onclick="shareBackup()">แชร์/บันทึกไฟล์</button>':''}<button class="btn o" onclick="copyBackup()">คัดลอกข้อความ</button></div>
+<label>หรือคัดลอกข้อความด้านล่างไปเก็บไว้เอง<textarea id="bk_t" rows="6" readonly onclick="this.select()">${esc(t)}</textarea></label>
+<div class="acts"><button class="btn o" onclick="openSettings()">กลับ</button></div>`);
+}
+function dlBackup(){
+  try{const b=new Blob([backupText()],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='study-tracker-'+today()+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);toast('กำลังดาวน์โหลด ถ้าไม่ขึ้นให้ใช้ปุ่มคัดลอกแทน')}
+  catch(e){toast('ดาวน์โหลดไม่ได้ ใช้ปุ่มคัดลอกแทน')}
+}
+async function shareBackup(){
+  try{await navigator.share({files:[new File([backupText()],'study-tracker-'+today()+'.json',{type:'application/json'})],title:'สำรองข้อมูลสมุดติดตามการเรียน'})}
+  catch(e){if(!e||e.name!=='AbortError')toast('แชร์ไม่ได้ ใช้ปุ่มคัดลอกแทน')}
+}
+function copyBackup(){
+  const fb=()=>{const ta=$('#bk_t');if(!ta)return;ta.focus();ta.select();let ok=false;try{ok=document.execCommand('copy')}catch(e){}toast(ok?'คัดลอกแล้ว':'กดค้างที่ข้อความแล้วเลือกคัดลอก')};
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(backupText()).then(()=>toast('คัดลอกแล้ว'),fb);else fb();
+}
+function openImport(){
+  modal(`<h3>นำเข้าข้อมูล</h3><p class="muted sm" style="margin:0">เลือกไฟล์สำรอง (.json) หรือวางข้อความที่คัดลอกไว้</p>
+<div class="acts"><label class="btn fbtn">เลือกไฟล์<input type="file" id="impf" accept=".json,application/json,text/plain" onchange="importFile(this)"></label></div>
+<label>หรือวางข้อความสำรองที่นี่<textarea id="im_txt" rows="6"></textarea></label>
+<div class="acts"><button class="btn" onclick="importText($('#im_txt').value)">นำเข้าจากข้อความ</button><button class="btn o" onclick="openSettings()">กลับ</button></div>`);
+}
+function importFile(inp){const f=inp.files[0];inp.value='';if(!f)return;const r=new FileReader();r.onload=()=>importText(String(r.result));r.onerror=()=>toast('อ่านไฟล์ไม่ได้');r.readAsText(f)}
+function importText(t){
+  let d;try{d=JSON.parse(String(t||'').trim());if(!d||!Array.isArray(d.subjects))throw 0}catch(e){return toast('ข้อมูลไม่ถูกต้อง')}
+  ask('แทนที่ข้อมูลปัจจุบันด้วยข้อมูลนี้?',()=>{S=Object.assign(blank(),d,{settings:Object.assign(blank().settings,d.settings||{})});if(!Array.isArray(S.images))S.images=[];save();closeM();applyTheme();render();toast('นำเข้าข้อมูลแล้ว')},'แทนที่');
+}
+function resetAll(){ask('ล้างข้อมูลทั้งหมด? กู้คืนไม่ได้ (สำรองไว้ก่อนได้)',()=>ask('ยืนยันอีกครั้ง ข้อมูลจะหายทั้งหมด',()=>{S.images.forEach(i=>{idbDel(i.id).catch(()=>{});try{localStorage.removeItem('st.img.'+i.id)}catch(e){}if(URLS[i.id]){URL.revokeObjectURL(URLS[i.id]);delete URLS[i.id]}});S=blank();save();closeM();applyTheme();render()},'ล้างทั้งหมด'),'ต่อไป')}
+function addSample(){
+  const m={id:uid(),name:'คณิตศาสตร์',color:COLORS[0],goal:4},e={id:uid(),name:'ภาษาอังกฤษ',color:COLORS[2],goal:3},p={id:uid(),name:'ฟิสิกส์',color:COLORS[3],goal:3};
+  S.subjects.push(m,e,p);
+  [[1,m],[2,e],[3,p],[4,m],[5,e]].forEach(([d,s])=>S.slots.push({id:uid(),sub:s.id,dow:d,start:'16:00',end:'17:00',room:''}));
+  save();render();
+}
+
+/* ---------- attendance ---------- */
+const ATT={p:['มา','#16a34a'],l:['สาย','#d97706'],v:['ลา','#2563eb'],a:['ขาด','#dc2626']};
+const attGet=(d,k)=>(S.att||{})[d+'|'+k]||'';
+const attLegend=()=>`<div class="row gap sm muted" style="flex-wrap:wrap;margin-top:4px">${Object.keys(ATT).map(k=>`<span><i class="sq" style="background:${ATT[k][1]}"></i> ${ATT[k][0]}</span>`).join('')}</div>`;
+function attRow(x){
+  if(x.date>today())return'<div class="muted sm" style="margin-top:8px">ยังไม่ถึงวัน เช็คเข้าเรียนไม่ได้</div>';
+  const cur=attGet(x.date,x.key);
+  return`<div class="att">${Object.keys(ATT).map(k=>`<button class="${cur===k?'on':''}" style="${cur===k?'background:'+ATT[k][1]:''}" onclick="setAtt('${x.date}','${x.key}','${k}')">${ATT[k][0]}</button>`).join('')}</div>`;
+}
+function setAtt(d,k,v){
+  if(d>today())return toast('เช็คล่วงหน้าไม่ได้');
+  if(!S.att)S.att={};const key=d+'|'+k;
+  if(S.att[key]===v){delete S.att[key];v=''}else S.att[key]=v;
+  S.logs=S.logs.filter(l=>!(l.date===d&&l.sk===k&&l.src==='attend'));
+  if(S.settings.attAuto&&(v==='p'||v==='l')&&!S.logs.some(l=>l.date===d&&l.sk===k)){
+    const x=sessionsOn(d).find(q=>q.key===k);if(x)S.logs.push({id:uid(),date:d,sub:x.sub,sk:k,min:tm(x.end)-tm(x.start),src:'attend'});
+  }
+  save();render();
+}
+function attStats(){
+  const R={};Object.keys(S.att||{}).forEach(key=>{const i=key.indexOf('|'),inf=sessInfo(key.slice(i+1));if(!inf)return;const r=R[inf.sub]||(R[inf.sub]={p:0,l:0,v:0,a:0});if(r[S.att[key]]!=null)r[S.att[key]]++});
+  return R;
+}
+const attTot=r=>r.p+r.l+r.v+r.a;
+const attPct=r=>attTot(r)?Math.round((r.p+r.l)/attTot(r)*100):null;
+function lowWarn(){
+  if(!S.settings.attWarn)return'';const R=attStats(),min=+S.settings.attMin||80;
+  const low=S.subjects.filter(x=>{const r=R[x.id];return r&&attTot(r)>=3&&attPct(r)<min});
+  if(!low.length)return'';
+  return`<div class="card" style="border-color:var(--red)"><b class="pend sm">เข้าเรียนต่ำกว่า ${min}%</b><div class="sm" style="margin-top:4px">${low.map(x=>`${esc(x.name)} ${attPct(R[x.id])}%`).join(' · ')}</div></div>`;
+}
+function attCard(){
+  const R=attStats(),min=+S.settings.attMin||80;
+  const rows=S.subjects.filter(x=>R[x.id]).map(x=>{
+    const r=R[x.id],pc=attPct(r),low=S.settings.attWarn&&attTot(r)>=3&&pc<min;
+    return`<div class="li"><div class="row between"><span><i class="dot" style="background:${x.color}"></i> <b>${esc(x.name)}</b></span><b style="color:${low?'var(--red)':'inherit'}">${pc}%</b></div><div class="bar"><i style="width:${pc}%;background:${low?'var(--red)':'#16a34a'}"></i></div><div class="muted sm" style="margin-top:3px">${Object.keys(ATT).map(k=>ATT[k][0]+' '+r[k]).join(' · ')}${low?` · <span class="pend">ต่ำกว่า ${min}%</span>`:''}</div></div>`}).join('');
+  return`<div class="card"><b>การเข้าเรียน (สะสม)</b> <span class="muted sm">เข้าเรียน = มา + สาย · แตะปุ่มซ้ำเพื่อล้างสถานะ</span>${rows||'<div class="muted sm" style="margin-top:6px">ยังไม่มีข้อมูล เช็คได้ที่การ์ดคาบในหน้า "วันนี้" (เปิดวันอื่นเพื่อเช็คย้อนหลัง)</div>'}</div>`;
+}
+function storageBanner(){return LSOK?'':`<div class="card" style="border-color:var(--red)"><b class="pend sm">ข้อมูลยังไม่ถูกบันทึกถาวร</b><div class="muted sm" style="margin-top:4px">หน้านี้ไม่อนุญาตให้เก็บข้อมูลในเครื่อง (เช่นเปิดในแชต) ข้อมูลจะหายเมื่อปิดหน้า เปิดไฟล์ด้วย Chrome/Safari เพื่อเก็บถาวร หรือกด ตั้งค่า → สำรองข้อมูล</div></div>`}
+
+/* ---------- theme ---------- */
+const mq=window.matchMedia?matchMedia('(prefers-color-scheme: dark)'):null;
+function applyTheme(){
+  const st=S.settings,dark=st.mode==='dark'||(st.mode==='auto'&&mq&&mq.matches),r=document.documentElement;
+  r.dataset.theme=st.theme||'sea';r.dataset.mode=dark?'dark':'light';
+  const m=document.querySelector('meta[name=theme-color]');if(m)m.content=getComputedStyle(r).getPropertyValue('--bg').trim()||'#ffffff';
+  try{localStorage.setItem('st.theme',JSON.stringify([r.dataset.theme,st.mode||'auto']))}catch(e){}
+}
+if(mq&&mq.addEventListener)mq.addEventListener('change',applyTheme);
+
+/* ---------- table images (IndexedDB) ---------- */
+let _db;
+function idb(){return _db||(_db=new Promise((res,rej)=>{try{const r=indexedDB.open('studytracker-img',1);r.onupgradeneeded=()=>r.result.createObjectStore('imgs',{keyPath:'id'});r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}catch(e){rej(e)}}))}
+function idbPut(rec){return idb().then(db=>new Promise((res,rej)=>{const t=db.transaction('imgs','readwrite');t.objectStore('imgs').put(rec);t.oncomplete=res;t.onerror=()=>rej(t.error)}))}
+function idbGet(id){return idb().then(db=>new Promise((res,rej)=>{const q=db.transaction('imgs').objectStore('imgs').get(id);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)}))}
+function idbDel(id){return idb().then(db=>new Promise((res,rej)=>{const t=db.transaction('imgs','readwrite');t.objectStore('imgs').delete(id);t.oncomplete=res;t.onerror=()=>rej(t.error)}))}
+const URLS={};
+function getUrl(id){
+  if(URLS[id])return Promise.resolve(URLS[id]);
+  return idbGet(id).then(r=>r&&r.blob?(URLS[id]=URL.createObjectURL(r.blob)):null).catch(()=>null).then(u=>{if(u)return u;try{const d=localStorage.getItem('st.img.'+id);if(d)return(URLS[id]=d)}catch(e){}return null});
+}
+function hydrate(root){
+  (root||document).querySelectorAll('img[data-img]').forEach(el=>{
+    const id=el.dataset.img;if(el.dataset.done===id)return;el.dataset.done=id;
+    getUrl(id).then(u=>{if(u)el.src=u;else{const sp=document.createElement('div');sp.className='muted sm';sp.style.padding='10px 0';sp.textContent='ไม่มีไฟล์ภาพในเครื่องนี้ (อาจนำเข้าจากไฟล์สำรอง) ลบแล้วอัปโหลดใหม่ได้';el.replaceWith(sp)}});
+  });
+}
+function shrink(f,max,q){return new Promise((res,rej)=>{const u=URL.createObjectURL(f),im=new Image();
+  im.onload=()=>{const k=Math.min(1,(max||2000)/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(b=>b?res(b):rej(new Error('blob')),'image/jpeg',q||.85)};
+  im.onerror=()=>{URL.revokeObjectURL(u);rej(new Error('load'))};im.src=u})}
+function blobToDataURL(b){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=()=>rej(r.error);r.readAsDataURL(b)})}
+async function putImg(id,blob){
+  URLS[id]=URL.createObjectURL(blob);
+  try{await idbPut({id,blob});return'idb'}catch(e){}
+  try{let u=await blobToDataURL(blob);if(u.length>1500000)u=await blobToDataURL(await shrink(blob,1400,.7));localStorage.setItem('st.img.'+id,u);return'ls'}catch(e){}
+  return'mem';
+}
+async function uploadImgs(inp){
+  const files=[...inp.files];let n=0,bad=0,mem=0;
+  for(const f of files){
+    if(f.type&&!f.type.startsWith('image/')){bad++;continue}
+    let blob;try{blob=await shrink(f)}catch(e){bad++;continue}
+    const id=uid(),mode=await putImg(id,blob);if(mode==='mem')mem++;
+    S.images.push({id,name:(f.name||'').replace(/\.[^.]+$/,'')||'ภาพตาราง',note:'',ts:Date.now()});n++;
+    if(S.settings.imgPin&&!S.settings.pinId)S.settings.pinId=id;
+  }
+  try{inp.value=''}catch(e){}
+  save();render();openImages();
+  toast(!n?'อ่านไฟล์ภาพไม่ได้ ลองใช้ JPG หรือ PNG (ไฟล์ HEIC บางเครื่องไม่รองรับ)':`อัปโหลด ${n} ภาพแล้ว`+(bad?` (ข้าม ${bad})`:'')+(mem?' · เก็บได้ชั่วคราวเท่านั้น เปิดไฟล์ด้วย Chrome/Safari เพื่อเก็บถาวร':''));
+}
+function openImages(){
+  const st=S.settings;
+  modal(`<h3>ภาพตาราง</h3><p class="muted sm" style="margin:0">ใช้เป็นต้นแบบดูอ้างอิงตอนกรอกตาราง · เก็บในเครื่องนี้เท่านั้น ย่อขนาดให้อัตโนมัติ</p>
+${S.images.length?S.images.map(im=>`<div class="gi"><img class="gimg" data-img="${im.id}" onclick="viewImg('${im.id}')" alt="${esc(im.name)}">
+<div class="row between" style="margin-top:8px;gap:8px"><div class="f1" style="min-width:0"><b>${esc(im.name)}</b>${st.pinId===im.id&&st.imgPin?' <span class="pill">ปักอยู่</span>':''}${st.imgMeta&&im.note?`<div class="muted sm">${esc(im.note)}</div>`:''}</div></div>
+<div class="acts" style="margin-top:8px"><button class="btn s o" onclick="viewImg('${im.id}')">${st.imgZoom?'ดูเต็มจอ':'ดู'}</button>${st.imgPin?`<button class="btn s o" onclick="pinImg('${im.id}')">${st.pinId===im.id?'เลิกปัก':'ปักเหนือตาราง'}</button>`:''}${st.imgMeta?`<button class="btn s o" onclick="editImg('${im.id}')">ชื่อ/โน้ต</button>`:''}<button class="btn s d" onclick="delImg('${im.id}')">ลบ</button></div></div>`).join(''):'<div class="empty">ยังไม่มีภาพ<br>อัปโหลดรูปตารางเรียนของโรงเรียนไว้ดูอ้างอิงได้</div>'}
+<div class="acts"><label class="btn fbtn">+ อัปโหลดภาพ<input type="file" id="imgf" accept="image/*" multiple onchange="uploadImgs(this)"></label><button class="btn o" onclick="closeM()">ปิด</button></div>`);
+}
+function pinImg(id){S.settings.pinId=S.settings.pinId===id?null:id;save();render();openImages()}
+function editImg(id){
+  const im=S.images.find(x=>x.id===id);if(!im)return;
+  modal(`<h3>ชื่อ/โน้ตของภาพ</h3><label>ชื่อภาพ<input id="im_n" value="${esc(im.name)}"></label><label>โน้ต (ไม่บังคับ)<textarea id="im_t" rows="3">${esc(im.note)}</textarea></label>
+<div class="acts"><button class="btn" onclick="saveImg('${id}')">บันทึก</button><button class="btn o" onclick="openImages()">กลับ</button></div>`);
+}
+function saveImg(id){const im=S.images.find(x=>x.id===id);if(!im)return;im.name=$('#im_n').value.trim()||'ภาพตาราง';im.note=$('#im_t').value.trim();save();render();openImages()}
+function delImg(id){
+  const im=S.images.find(x=>x.id===id);if(!im)return;
+  ask(`ลบภาพ "${im.name}"? (ไม่กระทบตารางที่กรอกไว้)`,()=>{
+    idbDel(id).catch(()=>{});try{localStorage.removeItem('st.img.'+id)}catch(e){}if(URLS[id]){URL.revokeObjectURL(URLS[id]);delete URLS[id]}
+    S.images=S.images.filter(x=>x.id!==id);if(S.settings.pinId===id)S.settings.pinId=null;
+    save();render();openImages();toast('ลบภาพแล้ว');
+  },'ลบ');
+}
+function pinnedBox(){
+  const st=S.settings;if(!st.imgOn||!st.imgPin||!st.pinId)return'';
+  const im=S.images.find(x=>x.id===st.pinId);if(!im)return'';
+  const open=st.pinOpen!==false;
+  return`<div class="card" style="margin-top:2px"><div class="row between"><b class="sm">ภาพต้นแบบ · ${esc(im.name)}</b><span><button class="lnk" onclick="togglePin()">${open?'ซ่อน':'แสดง'}</button> &nbsp;<button class="lnk" onclick="openImages()">จัดการ</button></span></div>${open?`<img class="pinimg" data-img="${im.id}" onclick="viewImg('${im.id}')" alt="${esc(im.name)}">${st.imgMeta&&im.note?`<div class="muted sm" style="margin-top:6px">${esc(im.note)}</div>`:''}`:''}</div>`;
+}
+function togglePin(){S.settings.pinOpen=S.settings.pinOpen===false;save();render()}
+
+/* viewer with pinch / wheel / double-tap zoom */
+let VZ={s:1,x:0,y:0,ptr:{},d0:0,s0:1,lt:0};
+function applyV(){const i=$('#vimg');if(i)i.style.transform=`translate(${VZ.x}px,${VZ.y}px) scale(${VZ.s})`;const pc=$('#vpct');if(pc)pc.textContent=Math.round(VZ.s*100)+'%'}
+function setZ(v){VZ.s=Math.max(1,Math.min(6,v));if(VZ.s===1){VZ.x=0;VZ.y=0}applyV()}
+function vzoom(f){setZ(VZ.s*f)}
+function vreset(){VZ.s=1;VZ.x=0;VZ.y=0;applyV()}
+function closeViewer(){const v=$('#viewer');v.style.display='none';v.innerHTML=''}
+function viewImg(id){
+  const im=S.images.find(x=>x.id===id);if(!im)return;
+  const zoom=S.settings.imgZoom!==false;VZ={s:1,x:0,y:0,ptr:{},d0:0,s0:1,lt:0};
+  const v=$('#viewer');
+  v.innerHTML=`<div class="vtop"><b style="font-size:15px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(im.name)}</b><button class="ib" onclick="closeViewer()" aria-label="ปิด">✕</button></div><div class="vstage" id="vst"><img data-img="${id}" id="vimg" draggable="false" alt=""></div>${zoom?`<div class="vbar"><button onclick="vzoom(1/1.4)" aria-label="ซูมออก">−</button><button onclick="vreset()" id="vpct">100%</button><button onclick="vzoom(1.4)" aria-label="ซูมเข้า">+</button></div>`:''}${S.settings.imgMeta&&im.note?`<div class="vnote">${esc(im.note)}</div>`:''}`;
+  v.style.display='flex';hydrate(v);
+  if(!zoom)return;
+  const st=$('#vst');
+  st.addEventListener('pointerdown',e=>{try{st.setPointerCapture(e.pointerId)}catch(x){}VZ.ptr[e.pointerId]={x:e.clientX,y:e.clientY};const ks=Object.keys(VZ.ptr);if(ks.length===2){const[a,b]=Object.values(VZ.ptr);VZ.d0=Math.hypot(a.x-b.x,a.y-b.y);VZ.s0=VZ.s}else{VZ.t0=Date.now();VZ.sx=e.clientX;VZ.sy=e.clientY}});
+  st.addEventListener('pointermove',e=>{const q=VZ.ptr[e.pointerId];if(!q)return;const ks=Object.keys(VZ.ptr);
+    if(ks.length===2){q.x=e.clientX;q.y=e.clientY;const[a,b]=Object.values(VZ.ptr);if(VZ.d0)setZ(VZ.s0*Math.hypot(a.x-b.x,a.y-b.y)/VZ.d0)}
+    else if(VZ.s>1){VZ.x+=e.clientX-q.x;VZ.y+=e.clientY-q.y;q.x=e.clientX;q.y=e.clientY;applyV()}else{q.x=e.clientX;q.y=e.clientY}});
+  const up=e=>{const n=Object.keys(VZ.ptr).length;delete VZ.ptr[e.pointerId];VZ.d0=0;
+    if(n===1&&e.type==='pointerup'&&Date.now()-VZ.t0<250&&Math.hypot(e.clientX-VZ.sx,e.clientY-VZ.sy)<8){const t=Date.now();if(t-VZ.lt<320){VZ.lt=0;VZ.s>1?vreset():setZ(2.5)}else VZ.lt=t}};
+  st.addEventListener('pointerup',up);st.addEventListener('pointercancel',up);
+  st.addEventListener('wheel',e=>{e.preventDefault();setZ(VZ.s*(e.deltaY<0?1.15:1/1.15))},{passive:false});
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){const v=$('#viewer');if(v&&v.style.display==='flex')closeViewer()}});
+
+/* ---------- PWA ---------- */
+let DIP=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();DIP=e});
+window.addEventListener('appinstalled',()=>{DIP=null;toast('ติดตั้งแอปแล้ว')});
+const isStandalone=()=>(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true;
+function installBox(){
+  const web=/^https?:$/.test(location.protocol),ios=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  let body;
+  if(isStandalone())body='<span class="muted sm">กำลังใช้งานแบบแอปที่ติดตั้งแล้ว</span>';
+  else if(!web)body='<span class="muted sm">ต้องเปิดผ่านเว็บ (https) ก่อนถึงจะติดตั้งเป็นแอปได้ ดูวิธีในไฟล์ README</span>';
+  else if(DIP)body='<button class="btn s" onclick="doInstall()">ติดตั้งแอป</button>';
+  else if(ios)body='<span class="muted sm">iPhone/iPad: กดปุ่มแชร์ใน Safari แล้วเลือก "เพิ่มไปยังหน้าจอโฮม"</span>';
+  else body='<span class="muted sm">เปิดเมนูของเบราว์เซอร์ แล้วเลือก "ติดตั้งแอป" หรือ "เพิ่มลงหน้าจอหลัก"</span>';
+  return`<b class="sm" style="display:block;margin-top:16px">ติดตั้งแอป</b><div style="margin-top:6px">${body}</div>`;
+}
+async function doInstall(){if(!DIP)return;DIP.prompt();try{await DIP.userChoice}catch(e){}DIP=null;openSettings()}
+if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){
+  const had=!!navigator.serviceWorker.controller;
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(had)toast('อัปเดตแล้ว ปิดแล้วเปิดแอปใหม่เพื่อใช้เวอร์ชันล่าสุด')});
+  try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+}
+
+/* ---------- notifications / tick ---------- */
+function pushNote(title,msg){toast(msg);try{if('Notification' in window&&Notification.permission==='granted')new Notification(title,{body:msg})}catch(e){}}
+function notifyStart(now){
+  const d=ymd(now),nm=now.getHours()*60+now.getMinutes();
+  sessionsOn(d).forEach(x=>{
+    const t=tm(x.start)-nm,k=d+x.key;
+    if(t>=0&&t<=S.settings.lead&&!S.notified[k]){S.notified[k]=1;save();pushNote('ใกล้ถึงคาบเรียน',sub(x.sub).name+' เริ่ม '+x.start+(x.room?' · '+x.room:''))}
+  });
+}
+function notifyCheck(now){
+  const d=ymd(now),nm=now.getHours()*60+now.getMinutes();
+  sessionsOn(d).forEach(x=>{
+    const t=nm-tm(x.end),k=d+'c'+x.key;
+    if(t>=0&&t<=45&&!attGet(d,x.key)&&!S.notified[k]){S.notified[k]=1;save();pushNote('เช็คเข้าเรียน',sub(x.sub).name+' จบคาบแล้ว อย่าลืมเช็คเข้าเรียน')}
+  });
+}
+function tick(){
+  if(S.timer){const e=$('#tel');if(e)e.textContent=el(Date.now()-S.timer.ts)}
+  const now=new Date();
+  if(S.settings.notify)notifyStart(now);
+  if(S.settings.chkRemind)notifyCheck(now);
+}
+(function init(){
+  applyTheme();try{const vp=new URLSearchParams(location.search).get('v');if(['today','sched','notes','sum'].includes(vp))view=vp}catch(e){}const t=today();Object.keys(S.notified||{}).forEach(k=>{if(!k.startsWith(t))delete S.notified[k]});
+  render();setInterval(tick,1000);
+})();
+</script>
+</body>
+</html>

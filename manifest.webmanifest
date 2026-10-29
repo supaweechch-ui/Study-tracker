@@ -1,0 +1,83 @@
+{
+ "name": "สมุดติดตามการเรียน",
+ "short_name": "สมุดเรียน",
+ "description": "บันทึกตารางเรียน เวลาเรียน โน้ต และเช็คเข้าเรียน",
+ "lang": "th",
+ "dir": "ltr",
+ "start_url": "./",
+ "scope": "./",
+ "id": "./",
+ "display": "standalone",
+ "background_color": "#f8fafc",
+ "theme_color": "#0284c7",
+ "categories": [
+  "education",
+  "productivity"
+ ],
+ "icons": [
+  {
+   "src": "icons/icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icons/icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icons/maskable-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ],
+ "shortcuts": [
+  {
+   "name": "วันนี้",
+   "short_name": "วันนี้",
+   "url": "./?v=today",
+   "icons": [
+    {
+     "src": "icons/icon-192.png",
+     "sizes": "192x192"
+    }
+   ]
+  },
+  {
+   "name": "ตารางเรียน",
+   "short_name": "ตาราง",
+   "url": "./?v=sched",
+   "icons": [
+    {
+     "src": "icons/icon-192.png",
+     "sizes": "192x192"
+    }
+   ]
+  },
+  {
+   "name": "โน้ต",
+   "short_name": "โน้ต",
+   "url": "./?v=notes",
+   "icons": [
+    {
+     "src": "icons/icon-192.png",
+     "sizes": "192x192"
+    }
+   ]
+  },
+  {
+   "name": "สรุป",
+   "short_name": "สรุป",
+   "url": "./?v=sum",
+   "icons": [
+    {
+     "src": "icons/icon-192.png",
+     "sizes": "192x192"
+    }
+   ]
+  }
+ ]
+}
